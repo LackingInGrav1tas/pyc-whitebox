@@ -1,0 +1,7 @@
+
+.vscode/settings.json
+c_templates/a.cpp
+a.exe
+tests/
+whitebox.exe
+compiled.cpp
