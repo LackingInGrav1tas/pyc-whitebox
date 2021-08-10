@@ -29,6 +29,8 @@ def main(argv):
     output = output.replace("/*key*/", bytes_to_string(key))
     output = output.replace("/*opcode*/", "{}")
 
+    operations = ["shift_n(mappings, SIZE, %MAG%, LEFT);", "", "", "", "", "", "", "", "", "", "", ""]
+
     with open("compiled.cpp", mode='w') as file:
         file.write(output)
         file.close()

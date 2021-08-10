@@ -19,22 +19,25 @@ enum Direction {
     LEFT, RIGHT
 };
 
-void shift_n(int *p, int n, Direction d) {
+template <typename T>
+void shift_n(T *p, int n, int size, Direction d) {
     if (d == LEFT) {
         for (int _ = 0; _ < n; _++) {
             int temp = *p;
-            for (int i = 0; i < SIZE-1; i++) {
+            for (int i = 0; i < size-1; i++) {
                 *(p+i) = *(p+i+1);
             }
-            *(p+SIZE-1) = temp;
+            *(p+size-1) = temp;
         }
     } else {
         for (int _ = 0; _ < n; _++) {
-            int temp = *(p+SIZE-1);
-            for (int i = SIZE-1; i > 0; i--) {
-                *(p-i) = *(p-i-1);
+            for (int __ = 0; __ < size-1; __++) {
+                int temp = *p;
+                for (int i = 0; i < size-1; i++) {
+                    *(p+i) = *(p+i+1);
+                }
+                *(p+size-1) = temp;
             }
-            *(p) = temp;
         }
     }
 }
@@ -51,18 +54,38 @@ int main(int argc, char** argv) {
 
         std::vector<std::function<void(void)>> functions = {
             [&](void)->void {
-
+                /*op1*/
             },
-            /*function2*/,
-            /*function3*/,
-            /*function4*/,
-            /*function5*/,
-            /*function6*/,
-            /*function7*/,
-            /*function8*/,
-            /*function9*/,
-            /*function10*/,
-            /*function11*/
+            [&](void)->void {
+                /*op2*/
+            },
+            [&](void)->void {
+                /*op3*/
+            },
+            [&](void)->void {
+                /*op4*/
+            },
+            [&](void)->void {
+                /*op5*/
+            },
+            [&](void)->void {
+                /*op6*/
+            },
+            [&](void)->void {
+                /*op7*/
+            },
+            [&](void)->void {
+                /*op8*/
+            },
+            [&](void)->void {
+                /*op9*/
+            },
+            [&](void)->void {
+                /*op10*/
+            },
+            [&](void)->void {
+                /*op11*/
+            }
         };
 
         #define MATCH(n) opcode[i] == mappings[n]
