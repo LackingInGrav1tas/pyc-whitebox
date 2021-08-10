@@ -19,16 +19,15 @@ def read_file_as_bytes(fname):
     return bytevec
 
 def main(argv):
-    key = read_file_as_bytes(argv[2])
-    
     ptxt = read_file_as_bytes(argv[1])
-    
+    key = read_file_as_bytes(argv[2])
     
     with open("c_templates\\main.cpp", mode='r') as file:
         output = file.read()
     
     output = output.replace("/*plaintext*/", bytes_to_string(ptxt))
     output = output.replace("/*key*/", bytes_to_string(key))
+    output = output.replace("/*opcode*/", "{}")
 
     with open("compiled.cpp", mode='w') as file:
         file.write(output)
