@@ -2,8 +2,10 @@
 #include <vector>
 #include <functional>
 #include <iostream>
+#include <string>
 
 #include "c_templates/AES.h"
+#include "c_templates/STREAM.h"
 
 void write_to_file(unsigned char *bytes, const char *fname) {
     ofstream fout;
@@ -44,7 +46,6 @@ void shift_n(T *p, int n, int size, Direction d) {
 }
 
 int main(int argc, char** argv) {
-    unsigned char plain[] = /*plaintext*/;
     unsigned char key[] = /*key*/;    
 
     // use self editing VM working backwards in the python program to use here
@@ -53,13 +54,6 @@ int main(int argc, char** argv) {
         char mappings[SIZE] = /*mappings*/;
         int magnitudes[] = /*magnitudes*/;
         std::vector<char> opcode = /*opcode*/;
-        int mag_M_L = /*MAGML*/;
-        int mag_M_R = /*MAGMR*/;
-        int mag_F_L = /*MAGFL*/;
-        int mag_F_R = /*MAGFR*/;
-        int mag_K_L = /*MAGKL*/;
-        int mag_K_R = /*MAGKR*/;
-        int mag_xor = /*MAGXOR*/;
 
         std::vector<std::function<void(void)>> functions = {
             /*functions*/
@@ -109,14 +103,54 @@ int main(int argc, char** argv) {
         }
     }
 
-    for (int i = 0; i < 128; i++) {
+    /*for (int i = 0; i < 128; i++) {
         std::cout << (int)key[i] << " ";
+    }
+    std::cout << std::endl;*/
+
+    if (argc != 2) {
+        std::cout << "expected a file to decrypt" << std::endl;
+        exit(1);
+    }
+
+    unsigned char *plain;
+    std::ifstream file(argv[1], ios::in|ios::binary|std::ifstream::ate);
+    unsigned int size = file.tellg();
+    plain = new unsigned char[size];
+    file.seekg(0, ios::beg);
+    file.read((char*)plain, size);
+
+    std::cout << "plaintext(" << size << "): ";
+    for (int i = 0; i < size; i++) {
+        std::cout << (int)plain[i] << " ";
     }
     std::cout << std::endl;
 
-    unsigned int size = 16 * sizeof(unsigned char);
-    AES aes(128);
-    unsigned char *decrypted = aes.DecryptECB(plain, size, key);
+    auto _AES = [&](void)->void {
+        AES aes(128);
+        unsigned char *decrypted = aes.DecryptECB(plain, 16 * sizeof(unsigned char), key);
+        
+        std::cout << "ciphertext(" << std::to_string(strlen((char*) decrypted)) << "): ";
+        for (int i = 0; i < strlen((char*) decrypted); i++) {
+            std::cout << (int)decrypted[i] << " ";
+        }
+        std::cout << std::endl;
 
-    write_to_file(decrypted, "dec.bin");
+        write_to_file(decrypted, "dec.bin");
+
+        delete plain;
+        delete decrypted;
+        std::cout << "DONE" << std::endl;
+    };
+    auto _STREAM = [&](void) -> void {
+        if (size != (sizeof(key)/sizeof(unsigned char))) {
+            std::cerr << "ERROR: keysize (" << (sizeof(key)/sizeof(unsigned char)) << ") != ciphertext size (" << size << ")" << std::endl;
+            exit(1);
+        }
+        write_to_file(
+            stream_cipher(key, plain, (sizeof(key)/sizeof(unsigned char))),
+            "dec.bin"
+        );
+    };
+    _STREAM();
 }

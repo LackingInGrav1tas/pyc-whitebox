@@ -1,0 +1,1 @@
+unsigned char* stream_cipher(unsigned char* key, unsigned char* plaintext, int size);
