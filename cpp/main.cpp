@@ -4,12 +4,12 @@
 #include <iostream>
 #include <string>
 
-#include "c_templates/AES.h"
-#include "c_templates/STREAM.h"
+#include "cpp/AES.h"
+#include "cpp/STREAM.h"
 
 void write_to_file(unsigned char *bytes, const char *fname) {
-    ofstream fout;
-    fout.open(fname, ios::binary | ios::out);
+    std::ofstream fout;
+    fout.open(fname, std::ios::binary | std::ios::out);
 
     fout.write((const char *)bytes, strlen((const char *)bytes));
 
@@ -114,10 +114,10 @@ int main(int argc, char** argv) {
     }
 
     unsigned char *plain;
-    std::ifstream file(argv[1], ios::in|ios::binary|std::ifstream::ate);
+    std::ifstream file(argv[1], std::ios::in|std::ios::binary|std::ifstream::ate);
     unsigned int size = file.tellg();
     plain = new unsigned char[size];
-    file.seekg(0, ios::beg);
+    file.seekg(0, std::ios::beg);
     file.read((char*)plain, size);
 
     std::cout << "plaintext(" << size << "): ";
@@ -127,7 +127,7 @@ int main(int argc, char** argv) {
     std::cout << std::endl;
 
     auto _AES = [&](void)->void {
-        AES aes(128);
+        /*AES aes(128);
         unsigned char *decrypted = aes.DecryptECB(plain, 16 * sizeof(unsigned char), key);
         
         std::cout << "ciphertext(" << std::to_string(strlen((char*) decrypted)) << "): ";
@@ -140,7 +140,8 @@ int main(int argc, char** argv) {
 
         delete plain;
         delete decrypted;
-        std::cout << "DONE" << std::endl;
+        std::cout << "DONE" << std::endl;*/
+        std::ofstream("dec.bin") << decrypt(plain, size, key);
     };
     auto _STREAM = [&](void) -> void {
         if (size != (sizeof(key)/sizeof(unsigned char))) {

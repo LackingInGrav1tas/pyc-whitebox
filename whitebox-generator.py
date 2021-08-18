@@ -28,12 +28,6 @@ def main(argv):
     # output = output.replace("/*plaintext*/", bytes_to_string(ptxt))
     output = output.replace("/*key*/", bytes_to_string(key))
 
-    mags = "{"
-    for i in range(11):
-        mags += str(random.randrange(255)) + ","
-    mags = mags[:-1]
-    output = output.replace("/*magnitudes*/", mags + "}")
-
     operations = [
         "shift_n(mappings, SIZE, magnitudes[0] % SIZE, LEFT);",
         "shift_n(mappings, SIZE, magnitudes[1] % SIZE, RIGHT);",
@@ -76,9 +70,22 @@ def main(argv):
         "magnitudes[10]--;",
     ]
 
+    mappings = [ x for x in range(len(operations))]
+    random.shuffle(mappings)
+    magnitudes = [ random.randrange(255) for x in range(11) ]
+    opcode = [ random.randrange(len(operations)) for x in range(200) ]
+    random.shuffle(operations)
+    
+    
+    mags = "{"
+    for i in range(len(magnitudes)):
+        mags += str(magnitudes.pop(0)) + ', '
+    mags = mags[:-1]
+    output = output.replace("/*magnitudes*/", mags + "}")
+
     s = "{"
-    for i in range(len(operations)):
-        s += str(i) + ','
+    for m in mappings:
+        s += str(m) + ','
     s = s[:-1]
     output = output.replace("/*mappings*/", s + '}')
     output = output.replace("/*SIZE*/", str(len(operations)))
@@ -90,6 +97,10 @@ def main(argv):
             }},"""
     output = output.replace("/*functions*/", functions_str)
 
+    op = "{"
+    for o in opcode:
+        op += str(o) + ','
+    op = op[:-1]
     output = output.replace("/*opcode*/", "{}")
 
     for i in range(len(operations)):
@@ -101,7 +112,7 @@ def main(argv):
         file.write(output)
         file.close()
     
-    os.system('g++ compiled.cpp c_templates/AES.cpp c_templates/STREAM.cpp -o whitebox.exe && strip whitebox.exe')
+    os.system('g++ compiled.cpp cpp/AES.cpp cpp/STREAM.cpp -o whitebox.exe && strip whitebox.exe')
 
 if __name__ == "__main__":
     main(sys.argv)

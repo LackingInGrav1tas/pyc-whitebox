@@ -7,4 +7,4 @@ whitebox.exe
 compiled.cpp
 *.bin
 *.pem
-dec.bin
+*.exe
