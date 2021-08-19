@@ -1,6 +1,7 @@
-import sys, os, random
+import sys, os, random, json
 
 def bytes_to_string(bytes):
+    """turns a byte array into the string format of { 0, 1, 2, ... }"""
     string = "{"
     for byte in bytes:
         string += f"{int.from_bytes(byte, 'big')},"
@@ -8,6 +9,7 @@ def bytes_to_string(bytes):
     return string + "}"
 
 def read_file_as_bytes(fname):
+    """returns a vector of bytes containing specified filedata"""
     bytevec = []
     with open(fname, mode='rb') as file:
         while True:
@@ -19,10 +21,14 @@ def read_file_as_bytes(fname):
     return bytevec
 
 def main(argv):
-    # ptxt = read_file_as_bytes(argv[1])
+    # getting settings from whitebox-settings.py
+    with open('whitebox-settings.json', 'r') as file:
+        jsondata = json.loads(file.read())
+
+
     key = read_file_as_bytes(argv[1])
     
-    with open("c_templates\\main.cpp", mode='r') as file:
+    with open("cpp\\main.cpp", mode='r') as file:
         output = file.read()
     
     # output = output.replace("/*plaintext*/", bytes_to_string(ptxt))
@@ -73,7 +79,7 @@ def main(argv):
     mappings = [ x for x in range(len(operations))]
     random.shuffle(mappings)
     magnitudes = [ random.randrange(255) for x in range(11) ]
-    opcode = [ random.randrange(len(operations)) for x in range(200) ]
+    opcode = [ random.randrange(len(operations)) for x in range(jsondata["opcode-rounds"]) ]
     random.shuffle(operations)
     
     
@@ -108,11 +114,14 @@ def main(argv):
         output = output.replace(f"/*op{i}*/", operations[r])
         operations.pop(r)
 
+    output = output.replace("/*DEC TYPE*/", "_STREAM();" if jsondata["encryption-scheme"] == "stream" else "_AES();")
+    output = output.replace("OUTPUTFILENAME", jsondata["decrypted-filename"])
+
     with open("compiled.cpp", mode='w') as file:
         file.write(output)
         file.close()
     
-    os.system('g++ compiled.cpp cpp/AES.cpp cpp/STREAM.cpp -o whitebox.exe && strip whitebox.exe')
+    os.system(jsondata["compilation-command"])
 
 if __name__ == "__main__":
     main(sys.argv)

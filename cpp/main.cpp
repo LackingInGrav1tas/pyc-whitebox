@@ -141,7 +141,7 @@ int main(int argc, char** argv) {
         delete plain;
         delete decrypted;
         std::cout << "DONE" << std::endl;*/
-        std::ofstream("dec.bin") << decrypt(plain, size, key);
+        std::ofstream("OUTPUTFILENAME") << decrypt(plain, size, key);
     };
     auto _STREAM = [&](void) -> void {
         if (size != (sizeof(key)/sizeof(unsigned char))) {
@@ -150,8 +150,8 @@ int main(int argc, char** argv) {
         }
         write_to_file(
             stream_cipher(key, plain, (sizeof(key)/sizeof(unsigned char))),
-            "dec.bin"
+            "OUTPUTFILENAME"
         );
     };
-    _STREAM();
+    /*DEC TYPE*/
 }

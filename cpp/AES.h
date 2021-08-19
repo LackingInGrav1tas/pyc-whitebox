@@ -6,7 +6,9 @@
 #include "openssl/buffer.h"
 #include "openssl/cmac.h"
 #include "openssl/ecdsa.h"
+#include "openssl/evp.h"
 
+#include <cstring>
 #include <string>
 #define bzero(b,len) (memset((b), '\0', (len)), (void) 0)
 

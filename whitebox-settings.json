@@ -1,0 +1,6 @@
+{
+    "compilation-command": "g++ compiled.cpp cpp/AES.cpp cpp/STREAM.cpp -o whitebox.exe && strip whitebox.exe'",
+    "encryption-scheme": "AES",
+    "decrypted-filename": "dec.bin",
+    "opcode-rounds": 200
+}
