@@ -1,7 +1,7 @@
 import sys, os, random, json
 
 def bytes_to_string(bytes):
-    """turns a byte array into the string format of { 0, 1, 2, ... }"""
+    """turns a byte array into a string in the format of { 0, 1, 2, ... }"""
     string = "{"
     for byte in bytes:
         string += f"{int.from_bytes(byte, 'big')},"
@@ -9,7 +9,7 @@ def bytes_to_string(bytes):
     return string + "}"
 
 def read_file_as_bytes(fname):
-    """returns a vector of bytes containing specified filedata"""
+    """returns a byte array containing specified file data"""
     bytevec = []
     with open(fname, mode='rb') as file:
         while True:
@@ -25,15 +25,14 @@ def main(argv):
     with open('whitebox-settings.json', 'r') as file:
         jsondata = json.loads(file.read())
 
-
+    # reading key to bytearray
     key = read_file_as_bytes(argv[1])
     
+    # getting C++ template code
     with open("cpp\\main.cpp", mode='r') as file:
-        output = file.read()
-    
-    # output = output.replace("/*plaintext*/", bytes_to_string(ptxt))
-    output = output.replace("/*key*/", bytes_to_string(key))
+        code = file.read()
 
+    # initializing opcodes
     operations = [
         "shift_n(mappings, SIZE, magnitudes[0] % SIZE, LEFT);",
         "shift_n(mappings, SIZE, magnitudes[1] % SIZE, RIGHT);",
@@ -76,51 +75,61 @@ def main(argv):
         "magnitudes[10]--;",
     ]
 
+    # initializing values for key obfuscation
     mappings = [ x for x in range(len(operations))]
     random.shuffle(mappings)
     magnitudes = [ random.randrange(255) for x in range(11) ]
     opcode = [ random.randrange(len(operations)) for x in range(jsondata["opcode-rounds"]) ]
     random.shuffle(operations)
     
-    
+    # writing magnitudes to code
     mags = "{"
     for i in range(len(magnitudes)):
         mags += str(magnitudes.pop(0)) + ', '
     mags = mags[:-1]
-    output = output.replace("/*magnitudes*/", mags + "}")
+    code = code.replace("/*magnitudes*/", mags + "}")
 
+    # writing mappings to code
     s = "{"
     for m in mappings:
         s += str(m) + ','
     s = s[:-1]
-    output = output.replace("/*mappings*/", s + '}')
-    output = output.replace("/*SIZE*/", str(len(operations)))
+    code = code.replace("/*mappings*/", s + '}')
+    code = code.replace("/*SIZE*/", str(len(operations)))
 
+    # writing functions to code
     functions_str = ""
     for i in range(len(operations)):
         functions_str += f"""[&](void)->void {{
                 /*op{i}*/
             }},"""
-    output = output.replace("/*functions*/", functions_str)
+    code = code.replace("/*functions*/", functions_str)
 
+    # writing opcode to code
     op = "{"
     for o in opcode:
         op += str(o) + ','
     op = op[:-1]
-    output = output.replace("/*opcode*/", "{}")
+    code = code.replace("/*opcode*/", "{}")
 
     for i in range(len(operations)):
         r = random.randrange(len(operations))
-        output = output.replace(f"/*op{i}*/", operations[r])
+        code = code.replace(f"/*op{i}*/", operations[r])
         operations.pop(r)
 
-    output = output.replace("/*DEC TYPE*/", "_STREAM();" if jsondata["encryption-scheme"] == "stream" else "_AES();")
-    output = output.replace("OUTPUTFILENAME", jsondata["decrypted-filename"])
+    # inserting obfuscated key
+    code = code.replace("/*key*/", bytes_to_string(key))
 
+    # setting decryption type / custom settings
+    code = code.replace("/*DEC TYPE*/", "_STREAM();" if jsondata["encryption-scheme"] == "stream" else "_AES();")
+    code = code.replace("OUTPUTFILENAME", jsondata["decrypted-filename"])
+
+    # writing to file
     with open("compiled.cpp", mode='w') as file:
-        file.write(output)
+        file.write(code)
         file.close()
     
+    # compiling file
     os.system(jsondata["compilation-command"])
 
 if __name__ == "__main__":
