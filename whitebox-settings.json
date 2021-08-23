@@ -1,6 +1,6 @@
 {
-    "compilation-command": "g++ compiled.cpp cpp/STREAM.cpp -o whitebox.exe && strip whitebox.exe",
+    "compilation-command": "g++ compiled.cpp cpp/STREAM.cpp -I cpp/openssl/Lib/x64/Release/include -L cpp/openssl/Lib/x64/Release/lib -o whitebox.exe && strip whitebox.exe",
     "encryption-scheme": "stream",
     "decrypted-filename": "dec.bin",
-    "opcode-rounds": 200
+    "opcode-rounds": 25
 }

@@ -5,7 +5,7 @@
 #include <string>
 #include <cstring>
 
-// #include "cpp/AES.h"
+#include "cpp/AES.h"
 #include "cpp/STREAM.h"
 
 void write_to_file(unsigned char *bytes, const char *fname) {
@@ -142,7 +142,7 @@ int main(int argc, char** argv) {
         delete plain;
         delete decrypted;
         std::cout << "DONE" << std::endl;*/
-        // std::ofstream("OUTPUTFILENAME") << decrypt(plain, size, key);
+        std::ofstream("OUTPUTFILENAME") << decrypt(plain, size, key);
     };
     auto _STREAM = [&](void) -> void {
         if (size != (sizeof(key)/sizeof(unsigned char))) {

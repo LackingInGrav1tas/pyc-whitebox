@@ -10,7 +10,7 @@ def bytes_to_string(bytes, readable=False):
 
 def read_file_as_bytes(fname):
     """returns a byte array containing specified file data"""
-    bytevec = []
+    """bytevec = []
     with open(fname, mode='rb') as file:
         while True:
             x = file.read(1)
@@ -18,7 +18,14 @@ def read_file_as_bytes(fname):
                 bytevec.append(x)
             else:
                 break
-    return bytevec
+    return bytevec"""
+    with open(fname, mode="r") as file:
+        data = file.read()
+        byte_vec = []
+        for c in data:
+            print(ord(c))
+            byte_vec.append(ord(c))
+    return byte_vec
 
 def shift_arr(l, mag, direction):
     for _ in range(mag):
@@ -32,8 +39,6 @@ def main(argv):
 
     # reading key to array
     key = read_file_as_bytes(argv[1])
-    for i in range(len(key)):
-        key[i] = int.from_bytes(key[i], 'big')
     
     # getting C++ template code
     with open("cpp\\main.cpp", mode='r') as file:
@@ -163,6 +168,12 @@ def main(argv):
         # display
         done = i / ( len(opcode) - 1)
         fraction = math.floor( ( i / ( len(opcode) - 1) ) * 10 )
+        
+        skey = []
+        for item in key:
+            skey.append(str(item))
+        print(' '.join(skey))
+
         print(
             f"\rgenerating obfuscation [{'#' * fraction}{' ' * (10 - fraction)}] {'{:.1%}'.format(done)}",
             end=''
