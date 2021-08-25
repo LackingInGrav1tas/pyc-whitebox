@@ -1,10 +1,11 @@
 # pyc-whitebox
 
-Python whitebox generator which creates an obfuscated C++ file containing a specified key and decryption scheme.
+Python whitebox generator which creates an obfuscated C++ file containing a specified key and decryption scheme. Also, the obfuscation techinque used is completely untested and idk how secure it is. Use at your own risk (preferably not at all).
 
 ### HOW TO USE
 
-format: ``` whitebox-generator.py <key-file>```
+generator format: ``` whitebox-generator.py <key-file>```
+whitebox format: ```whitebox.exe <encrypted-file> <output-file>```
 
 Options (i.e. compilation, obfucsation rounds, scheme, etc.) are found and editable in the ```whitebox.json``` file.
 

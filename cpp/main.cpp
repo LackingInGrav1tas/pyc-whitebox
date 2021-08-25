@@ -152,7 +152,7 @@ int main(int argc, char** argv) {
         }
         write_to_file(
             stream_cipher(key, plain, (sizeof(key)/sizeof(unsigned char))),
-            "OUTPUTFILENAME"
+            argv[2]
         );
     };
     /*DEC TYPE*/

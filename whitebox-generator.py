@@ -23,7 +23,7 @@ def read_file_as_bytes(fname):
         data = file.read()
         byte_vec = []
         for c in data:
-            print(ord(c))
+            # print(ord(c))
             byte_vec.append(ord(c))
     return byte_vec
 
@@ -167,13 +167,13 @@ def main(argv):
         done = i / ( len(opcode) - 1)
         fraction = math.floor( ( i / ( len(opcode) - 1) ) * 10 )
 
-        """print(
+        print(
             f"\rgenerating obfuscation [{'#' * fraction}{' ' * (10 - fraction)}] {'{:.1%}'.format(done)}",
             end=''
-        )"""
+        )
         # calling op
         call_op(functions[opcode[i]])
-        print(f"{key} {functions[opcode[i]]}")
+        # print(f"{key} {functions[opcode[i]]}")
     print() # flushing
      
     
@@ -217,9 +217,8 @@ def main(argv):
     print("writing obfuscated key...")
     code = code.replace("/*key*/", bytes_to_string(key, True))
 
-    # setting decryption type / custom settings
+    # setting decryption type
     code = code.replace("/*DEC TYPE*/", "_STREAM();" if jsondata["encryption-scheme"] == "stream" else "_AES();")
-    code = code.replace("OUTPUTFILENAME", jsondata["decrypted-filename"])
 
     # writing to file
     print("creating C++ file...")
