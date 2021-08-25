@@ -146,7 +146,8 @@ int main(int argc, char** argv) {
     };
     auto _STREAM = [&](void) -> void {
         if (size != (sizeof(key)/sizeof(unsigned char))) {
-            std::cerr << "ERROR: keysize (" << (sizeof(key)/sizeof(unsigned char)) << ") != ciphertext size (" << size << ")" << std::endl;
+            
+            std::cerr << "\nERROR: keysize (" << (sizeof(key)/sizeof(unsigned char)) << ") != ciphertext size (" << size << ")" << std::endl;
             exit(1);
         }
         write_to_file(

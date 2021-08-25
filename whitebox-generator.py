@@ -59,18 +59,16 @@ def main(argv):
         "magnitudes[2]--;",
         "magnitudes[3]--;",
 
-        "for (int i = 0; i < 16; i++) { key[i] <<= magnitudes[4]; }",
-        "for (int i = 0; i < 16; i++) { key[i] >>= magnitudes[5]; }",
+        "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] <<= magnitudes[4]; }",
+        "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] >>= magnitudes[5]; }",
         "magnitudes[4]++;",
         "magnitudes[5]++;",
         "magnitudes[4]--;",
         "magnitudes[5]--;",
 
-        "for (int i = 0; i < 16; i++) { key[i] ^= magnitudes[6]; }",
+        "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] ^= magnitudes[6]; }",
         "magnitudes[6]++;",
         "magnitudes[6]--;",
-
-        "for (int i = 0; i < 16; i++) { key[i] = ~key[i]; }",
 
         "shift_n(magnitudes, (sizeof(magnitudes)/sizeof(int)), magnitudes[7] % (sizeof(magnitudes)/sizeof(int)), LEFT);",
         "shift_n(magnitudes, (sizeof(magnitudes)/sizeof(int)), magnitudes[8] % (sizeof(magnitudes)/sizeof(int)), RIGHT);",
@@ -79,8 +77,8 @@ def main(argv):
         "magnitudes[8]++;",
         "magnitudes[8]--;",
 
-        "shift_n(key, 16, magnitudes[9] % 16, LEFT);",
-        "shift_n(key, 16, magnitudes[10] % 16, RIGHT);",
+        "shift_n(key, (sizeof(key) / sizeof(unsigned char)), magnitudes[9] % (sizeof(key) / sizeof(unsigned char)), LEFT);",
+        "shift_n(key, (sizeof(key) / sizeof(unsigned char)), magnitudes[10] % (sizeof(key) / sizeof(unsigned char)), RIGHT);",
         "magnitudes[9]++;",
         "magnitudes[9]--;",
         "magnitudes[10]++;",
@@ -135,31 +133,31 @@ def main(argv):
                 shift_arr(functions, magnitudes[8] % len(magnitudes), "LEFT")
 
         elif matches("shift_n(key"):
-            # shift_n(key, SIZE, magnitudes[?] % 16, DIR);
+            # shift_n(key, SIZE, magnitudes[?] % (sizeof(key) / sizeof(unsigned char)), DIR);
             if matches("LEFT);", True):
                 shift_arr(key, magnitudes[9] % len(key), "RIGHT")
             else:
                 shift_arr(key, magnitudes[10] % len(key), "LEFT")
 
         elif matches("{ key[i] = ~key[i]; }", True):
-            # for (int i = 0; i < 16; i++) { key[i] = ~key[i]; }
+            # for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] = ~key[i]; }
             for i in range(len(key)):
-                key[i] =  ( 0 - (key[i]+1) )
+               pass #  key[i] =  ( 0 - (key[i]+1) )
 
         elif matches("{ key[i] ^= magnitudes[6]; }", True):
-            # for (int i = 0; i < 16; i++) { key[i] ^= magnitudes[6]; }
+            # for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] ^= magnitudes[6]; }
             for i in range(len(key)):
-                key[i] ^= magnitudes[6]
+                pass # key[i] ^= magnitudes[6]
 
         elif matches("{ key[i] <<= magnitudes[4]; }", True):
-            # for (int i = 0; i < 16; i++) { key[i] <<= magnitudes[4]; }
+            # for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] <<= magnitudes[4]; }
             for i in range(len(key)):
-                key[i] >>= magnitudes[4]
+                pass # key[i] >>= magnitudes[4]
         
         elif matches("{ key[i] >>= magnitudes[4]; }", True):
-            # for (int i = 0; i < 16; i++) { key[i] >>= magnitudes[4]; }
+            # for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] >>= magnitudes[4]; }
             for i in range(len(key)):
-                key[i] <<= magnitudes[4]
+                pass # key[i] <<= magnitudes[4]
 
 
     # reverse engineering obfuscation
@@ -168,18 +166,14 @@ def main(argv):
         # display
         done = i / ( len(opcode) - 1)
         fraction = math.floor( ( i / ( len(opcode) - 1) ) * 10 )
-        
-        skey = []
-        for item in key:
-            skey.append(str(item))
-        print(' '.join(skey))
 
-        print(
+        """print(
             f"\rgenerating obfuscation [{'#' * fraction}{' ' * (10 - fraction)}] {'{:.1%}'.format(done)}",
             end=''
-        )
+        )"""
         # calling op
         call_op(functions[opcode[i]])
+        print(f"{key} {functions[opcode[i]]}")
     print() # flushing
      
     
@@ -212,7 +206,7 @@ def main(argv):
     # reversing then writing opcode to code
     print("writing opcode...")
     opcode.reverse()
-    code = code.replace("/*opcode*/", f"{bytes_to_string(opcode, True)}")
+    code = code.replace("/*opcode*/", "{}") # f"{bytes_to_string(opcode, True)}"
 
     for i in range(len(functions)):
         r = random.randrange(len(functions))
