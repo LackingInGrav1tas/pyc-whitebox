@@ -47,6 +47,16 @@ void shift_n(T *p, int n, int size, Direction d) {
     }
 }
 
+void bit_rot_n(unsigned char &c, int n, Direction d) {
+    n %= 8;
+    if (d == LEFT) {
+        c = (c << n)|(c >> (8 - n));
+    } else {
+        n = 8-n;
+        c = (c << n)|(c >> (8 - n));
+    }
+}
+
 int main(int argc, char** argv) {
     unsigned char key[] = /*key*/;    
 
@@ -105,10 +115,10 @@ int main(int argc, char** argv) {
         }
     }
 
-    /*for (int i = 0; i < 128; i++) {
+    for (int i = 0; i < 128; i++) {
         std::cout << (int)key[i] << " ";
     }
-    std::cout << std::endl;*/
+    std::cout << std::endl;
 
     if (argc != 2) {
         std::cout << "expected a file to decrypt" << std::endl;

@@ -9,7 +9,7 @@ whitebox format: ```whitebox.exe <encrypted-file> <output-file>```
 
 Options (i.e. compilation, obfucsation rounds, scheme, etc.) are found and editable in the ```whitebox.json``` file.
 
-Please note that compilation of the c++ whitebox requires OpenSSL to be installed.
+Please note that compilation of the c++ whitebox requires OpenSSL to be installed. I used Strawberry in the default ```whitebox-settings.json``` (c:\strawberry).
 
 
 ---

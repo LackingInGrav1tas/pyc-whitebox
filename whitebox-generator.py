@@ -1,5 +1,4 @@
 import sys, os, random, json, math
-
 def bytes_to_string(bytes, readable=False):
     """turns a byte array into a string in the format of { 0, 1, 2, ... }"""
     string = "{"
@@ -139,20 +138,18 @@ def main(argv):
             else:
                 shift_arr(key, magnitudes[10] % len(key), "LEFT")
 
-        elif matches("{ key[i] = ~key[i]; }", True):
-            # for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] = ~key[i]; }
-            for i in range(len(key)):
-               pass #  key[i] =  ( 0 - (key[i]+1) )
-
+        # found xor op, xoring
         elif matches("{ key[i] ^= magnitudes[6]; }", True):
             # for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] ^= magnitudes[6]; }
             for i in range(len(key)):
                 pass # key[i] ^= magnitudes[6]
 
+        # found lrot op, rotating right
         elif matches("{ bit_rot_n(key[i], magnitudes[4], LEFT); }", True):
             for i in range(len(key)):
                 key[i] = ((key[i] & (2**8-1)) >> magnitudes[4]%8) | (key[i] << (8-(magnitudes[4]%8)) & (2**8-1))
         
+        # found rrot op, rotating left
         elif matches("{ bit_rot_n(key[i], magnitudes[5], RIGHT); }", True):
             for i in range(len(key)):
                 key[i] = ((key[i] & (2**8-1)) << magnitudes[4]%8) | (key[i] >> (8-(magnitudes[4]%8)) & (2**8-1))
@@ -212,7 +209,7 @@ def main(argv):
         functions.pop(r)
 
     # inserting obfuscated key
-    print("writing obfuscated key...")
+    print(f"writing obfuscated key ({key})...")
     code = code.replace("/*key*/", bytes_to_string(key, True))
 
     # setting decryption type
