@@ -59,8 +59,8 @@ def main(argv):
         "magnitudes[2]--;",
         "magnitudes[3]--;",
 
-        "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] <<= magnitudes[4]; }",
-        "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] >>= magnitudes[5]; }",
+        "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { bit_rot_n(key[i], magnitudes[4], LEFT); }",
+        "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { bit_rot_n(key[i], magnitudes[5], RIGHT); }",
         "magnitudes[4]++;",
         "magnitudes[5]++;",
         "magnitudes[4]--;",
@@ -149,15 +149,13 @@ def main(argv):
             for i in range(len(key)):
                 pass # key[i] ^= magnitudes[6]
 
-        elif matches("{ key[i] <<= magnitudes[4]; }", True):
-            # for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] <<= magnitudes[4]; }
+        elif matches("{ bit_rot_n(key[i], magnitudes[4], LEFT); }", True):
             for i in range(len(key)):
-                pass # key[i] >>= magnitudes[4]
+                key[i] = ((key[i] & (2**8-1)) >> magnitudes[4]%8) | (key[i] << (8-(magnitudes[4]%8)) & (2**8-1))
         
-        elif matches("{ key[i] >>= magnitudes[4]; }", True):
-            # for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] >>= magnitudes[4]; }
+        elif matches("{ bit_rot_n(key[i], magnitudes[5], RIGHT); }", True):
             for i in range(len(key)):
-                pass # key[i] <<= magnitudes[4]
+                key[i] = ((key[i] & (2**8-1)) << magnitudes[4]%8) | (key[i] >> (8-(magnitudes[4]%8)) & (2**8-1))
 
 
     # reverse engineering obfuscation

@@ -25,6 +25,7 @@ enum Direction {
 
 template <typename T>
 void shift_n(T *p, int n, int size, Direction d) {
+    n %= size;
     if (d == LEFT) {
         for (int _ = 0; _ < n; _++) {
             T temp = *p;
