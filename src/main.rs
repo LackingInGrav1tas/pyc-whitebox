@@ -5,6 +5,9 @@ use sim::VM;
 use json;
 
 use std::fs;
+use std::env;
+use std::fs::File;
+use std::io::Read;
 
 fn vec_to_cstr(v: Vec<u8>) -> String {
     let mut s = String::from("{");
@@ -16,6 +19,18 @@ fn vec_to_cstr(v: Vec<u8>) -> String {
 }
 
 fn main() {
+    println!("getting key...");
+    // HANDLING ARGS
+    let argv = std::env::args().collect::<Vec<String>>();
+    if argv.len() != 2 {
+        println!("ERROR - correct format: whitebox-generator.exe <key-file>");
+        std::process::exit(1);
+    }
+    
+    let mut file = File::open(argv[1].clone()).unwrap();
+    let mut key = vec![];
+    file.read_to_end(& mut key).expect(&format!("could not open key file \"{}\"", argv[1]));
+
     println!("fetching settings...");
     // GETTING SETTINGS
     let settings = json::parse(
@@ -24,7 +39,7 @@ fn main() {
 
     println!("generating opcode...");
     // GENERATING OPCODE
-    let mut vm = VM::new(vec![], settings["opcode-rounds"].as_i32().expect("could not parse opcode-rounds in whitebox-settings.json"));
+    let mut vm = VM::new(key, settings["opcode-rounds"].as_i32().expect("could not parse opcode-rounds in whitebox-settings.json"));
     vm.generate();
 
     println!("writing to file...");
@@ -72,8 +87,14 @@ fn main() {
         .args(
             settings["compilation-command"].as_str().unwrap().split(" ")
         ).status() {
-            Ok(_)  => "DONE: COMPILATION SUCCESSFUL",
-            Err(_) => "DONE: COMPILATION FAILED"
+            Ok(status)  => format!("DONE: COMPILATION {}",
+                if status.success() {
+                    "SUCCESSFUL"
+                } else {
+                    "FAILED"
+                }
+            ),
+            Err(_) => String::from("DONE: CALL FAILED")
         }
     );
 }

@@ -17,8 +17,6 @@ void write_to_file(unsigned char *bytes, const char *fname) {
     fout.close();
 }
 
-const int SIZE = /*SIZE*/;
-
 enum Direction {
     LEFT, RIGHT
 };
@@ -68,10 +66,10 @@ int main(int argc, char** argv) {
     // use self editing VM working backwards in the python program to use here
     {
         // shiftable opcode mappings
-        char mappings[SIZE] = /*mappings*/;
+        
         int magnitudes[] = /*magnitudes*/;
         std::vector<char> opcode = /*opcode*/;
-
+        char mappings[] = /*mappings*/;
         std::vector<std::function<void(void)>> functions = {
             /*functions*/
         };

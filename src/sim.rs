@@ -12,8 +12,8 @@ pub struct VM<'a> {
 impl VM<'_> {
     pub fn new(key: Vec<u8>, rounds: i32) -> Self {
         let ops = vec![
-            "shift_n(mappings, SIZE, magnitudes[0] % SIZE, LEFT);",
-            "shift_n(mappings, SIZE, magnitudes[1] % SIZE, RIGHT);",
+            "shift_n(mappings, functions.size(), magnitudes[0] % functions.size(), LEFT);",
+            "shift_n(mappings, functions.size(), magnitudes[1] % functions.size(), RIGHT);",
             "shift_n(functions.data(), functions.size(), magnitudes[2] % functions.size(), LEFT);",
             "shift_n(functions.data(), functions.size(), magnitudes[3] % functions.size(), RIGHT);",
             "magnitudes[0]++;",
