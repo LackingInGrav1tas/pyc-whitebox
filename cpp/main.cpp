@@ -58,7 +58,12 @@ void bit_rot_n(unsigned char &c, int n, Direction d) {
 }
 
 int main(int argc, char** argv) {
-    unsigned char key[] = /*key*/;    
+    unsigned char key[] = /*key*/;
+    std::cout << "obfuscated: ";
+    for (int i = 0; i < 128; i++) {
+        std::cout << (int)key[i] << " ";
+    }
+    std::cout << std::endl;
 
     // use self editing VM working backwards in the python program to use here
     {
@@ -73,48 +78,11 @@ int main(int argc, char** argv) {
 
         #define MATCH(n) opcode[pc] == mappings[n]
         for (int pc = 0; pc < opcode.size(); pc++) {
-            if (MATCH(0)) {
-                functions[0]();
-            } else if (MATCH(1)) {
-                functions[1]();
-            } else if (MATCH(2)) {
-                functions[2]();
-            } else if (MATCH(3)) {
-                functions[3]();
-            } else if (MATCH(4)) {
-                functions[4]();
-            } else if (MATCH(5)) {
-                functions[5]();
-            } else if (MATCH(6)) {
-                functions[6]();
-            } else if (MATCH(7)) {
-                functions[7]();
-            } else if (MATCH(8)) {
-                functions[8]();
-            } else if (MATCH(9)) {
-                functions[9]();
-            } else if (MATCH(10)) {
-                functions[10]();
-            } else if (MATCH(11)) {
-                functions[11]();
-            }  else if (MATCH(12)) {
-                functions[12]();
-            }  else if (MATCH(13)) {
-                functions[13]();
-            }  else if (MATCH(14)) {
-                functions[14]();
-            }  else if (MATCH(15)) {
-                functions[15]();
-            }  else if (MATCH(16)) {
-                functions[16]();
-            }  else if (MATCH(17)) {
-                functions[17]();
-            }  else if (MATCH(18)) {
-                functions[18]();
-            } 
+            /*matching*/
         }
     }
 
+    std::cout << "unobfuscated: ";
     for (int i = 0; i < 128; i++) {
         std::cout << (int)key[i] << " ";
     }

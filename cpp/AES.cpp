@@ -1,7 +1,7 @@
 #include "AES.h"
 
 std::string decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key) {
-    /*EVP_CIPHER_CTX *ctx;
+    EVP_CIPHER_CTX *ctx;
     unsigned char *plaintexts;
     int len;
     int plaintext_len;
@@ -27,7 +27,5 @@ std::string decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char
     EVP_CIPHER_CTX_free(ctx);
     std::string ret = (char*)plaintext;
     delete [] plaintext;
-    return ret;*/
-    AES_cbc_encrypt(NULL, NULL, 16, NULL, NULL, 0);
-    return "";
+    return ret;
 }

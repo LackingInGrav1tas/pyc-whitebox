@@ -2,6 +2,7 @@
 
 Python whitebox generator which creates an obfuscated C++ file containing a specified key and decryption scheme. Also, the obfuscation techinque used is completely untested and idk how secure it is. Use at your own risk (preferably not at all).
 
+---
 ### HOW TO USE
 
 generator format: ``` whitebox-generator.py <key-file>```

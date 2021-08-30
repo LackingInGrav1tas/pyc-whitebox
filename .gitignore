@@ -12,3 +12,8 @@ make.py
 __pycache__/
 __pycache__/whitebox-generator.cpython-38.pyc
 dec.bin
+/old
+
+# Added by cargo
+
+/target
