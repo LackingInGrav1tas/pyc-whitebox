@@ -94,18 +94,19 @@ impl VM<'_> {
 
     fn call(& mut self, op: &str) {
         let FSIZE = self.functions.len() as u8;
+        let KSIZE = self.key.len();
         if op.contains("++;") {
             // parsing index, then doing opposite
             self.magnitudes[
                 op.replace("magnitudes[", "")
-                    .replace("++;", "")
+                    .replace("]++;", "")
                     .parse::<usize>().unwrap()
             ] -= 1;
         } else if op.contains("--;") {
             // parsing index, then doing opposite
             self.magnitudes[
                 op.replace("magnitudes[", "")
-                    .replace("--;", "")
+                    .replace("]--;", "")
                     .parse::<usize>().unwrap()
             ] += 1;
         } else {
@@ -113,7 +114,7 @@ impl VM<'_> {
                 // SHIFTING mappings
                 "shift_n(mappings, functions.size(), magnitudes[0] % functions.size(), LEFT);" => {
                     self.mappings.rotate_right(
-                        (self.magnitudes[0] % self.functions.len() as u8) as usize
+                        self.magnitudes[0] as usize % self.functions.len()
                     )
                 }
                 "shift_n(mappings, functions.size(), magnitudes[1] % functions.size(), RIGHT);" => {
@@ -145,21 +146,33 @@ impl VM<'_> {
                 }
                 // XORING key bits
                 "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] ^= magnitudes[6]; }" => {
-
+                    for i in 0..self.key.len() {
+                        self.key[i] ^= self.magnitudes[6];
+                    }
                 }
                 // SHIFTING magnitudes
                 "shift_n(magnitudes, (sizeof(magnitudes)/sizeof(int)), magnitudes[7] % (sizeof(magnitudes)/sizeof(int)), LEFT);" => {
-
+                    let v = self.magnitudes[7] % self.magnitudes.len() as u8;
+                    self.magnitudes.rotate_right(
+                        v as usize
+                    )
                 }
                 "shift_n(magnitudes, (sizeof(magnitudes)/sizeof(int)), magnitudes[8] % (sizeof(magnitudes)/sizeof(int)), RIGHT);" => {
-
+                    let v = self.magnitudes[8] % self.magnitudes.len() as u8;
+                    self.magnitudes.rotate_left(
+                        v as usize
+                    )
                 }
                 // SHIFTING key
                 "shift_n(key, (sizeof(key) / sizeof(unsigned char)), magnitudes[9] % (sizeof(key) / sizeof(unsigned char)), LEFT);" => {
-
+                    self.key.rotate_right(
+                        self.magnitudes[9] as usize % KSIZE
+                    )
                 }
                 "shift_n(key, (sizeof(key) / sizeof(unsigned char)), magnitudes[10] % (sizeof(key) / sizeof(unsigned char)), RIGHT);" => {
-
+                    self.key.rotate_left(
+                        self.magnitudes[10] as usize % KSIZE
+                    )
                 }
 
                 _ => unimplemented!()
@@ -169,8 +182,10 @@ impl VM<'_> {
 
     pub fn generate(& mut self) {
         while !self.done() {
-            if self.opcode[self.pc as usize] == self.mappings[0] {
-                self.call(self.functions[0]);
+            for i in 0..self.mappings.len() {
+                if self.opcode[self.pc as usize] == self.mappings[i] {
+                    self.call(self.functions[i]);
+                }
             }
             self.pc -= 1;
         }

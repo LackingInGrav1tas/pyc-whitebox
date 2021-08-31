@@ -1,6 +1,6 @@
 {
     "compilation-command": "C:\\strawberry\\c\\bin\\g++ -IC:\\strawberry\\c\\include\\openssl -LC:\\strawberry\\c\\bin\\ -lcrypto-1_1-x64__ compiled.cpp cpp/AES.cpp cpp/STREAM.cpp -o whitebox.exe",
-    "encryption-scheme": "AES",
+    "encryption-scheme": "STREAM",
     "opcode-rounds": 200,
     "command-service": "cmd"
 }

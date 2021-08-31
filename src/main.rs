@@ -43,6 +43,7 @@ fn main() {
     vm.generate();
 
     println!("writing to file...");
+    println!("key: {:?}\n", vm.key);
     // WRITING TO FILE
     fs::write("compiled.cpp",
         fs::read_to_string("cpp/main.cpp").unwrap()
