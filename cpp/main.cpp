@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
     {
         // shiftable opcode mappings
         
-        int magnitudes[] = /*magnitudes*/;
+        unsigned char magnitudes[] = /*magnitudes*/;
         std::vector<char> opcode = /*opcode*/;
         char mappings[] = /*mappings*/;
         std::vector<std::function<void(void)>> functions = {

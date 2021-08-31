@@ -97,18 +97,24 @@ impl VM<'_> {
         let KSIZE = self.key.len();
         if op.contains("++;") {
             // parsing index, then doing opposite
-            self.magnitudes[
-                op.replace("magnitudes[", "")
-                    .replace("]++;", "")
-                    .parse::<usize>().unwrap()
-            ] -= 1;
+            let n = op.replace("magnitudes[", "")
+                .replace("]++;", "")
+                .parse::<usize>().unwrap();
+            if self.magnitudes[n] == 0 {
+                self.magnitudes[n] = 255;
+            } else {
+                self.magnitudes[n] -= 1;
+            }
         } else if op.contains("--;") {
             // parsing index, then doing opposite
-            self.magnitudes[
-                op.replace("magnitudes[", "")
-                    .replace("]--;", "")
-                    .parse::<usize>().unwrap()
-            ] += 1;
+            let n = op.replace("magnitudes[", "")
+                .replace("]--;", "")
+                .parse::<usize>().unwrap();
+            if self.magnitudes[n] == 255 {
+                self.magnitudes[n] = 0;
+            } else {
+                self.magnitudes[n] += 1;
+            }
         } else {
             match op {
                 // SHIFTING mappings
