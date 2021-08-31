@@ -92,10 +92,85 @@ impl VM<'_> {
         self.pc == -1
     }
 
+    fn call(& mut self, op: &str) {
+        let FSIZE = self.functions.len() as u8;
+        if op.contains("++;") {
+            // parsing index, then doing opposite
+            self.magnitudes[
+                op.replace("magnitudes[", "")
+                    .replace("++;", "")
+                    .parse::<usize>().unwrap()
+            ] -= 1;
+        } else if op.contains("--;") {
+            // parsing index, then doing opposite
+            self.magnitudes[
+                op.replace("magnitudes[", "")
+                    .replace("--;", "")
+                    .parse::<usize>().unwrap()
+            ] += 1;
+        } else {
+            match op {
+                // SHIFTING mappings
+                "shift_n(mappings, functions.size(), magnitudes[0] % functions.size(), LEFT);" => {
+                    self.mappings.rotate_right(
+                        (self.magnitudes[0] % self.functions.len() as u8) as usize
+                    )
+                }
+                "shift_n(mappings, functions.size(), magnitudes[1] % functions.size(), RIGHT);" => {
+                    self.mappings.rotate_left(
+                        (self.magnitudes[1] % FSIZE) as usize
+                    )
+                }
+                // SHIFTING functions
+                "shift_n(functions.data(), functions.size(), magnitudes[2] % functions.size(), LEFT);" => {
+                    self.functions.rotate_right(
+                        (self.magnitudes[2] % FSIZE ) as usize
+                    )
+                }
+                "shift_n(functions.data(), functions.size(), magnitudes[3] % functions.size(), RIGHT);" => {
+                    self.functions.rotate_left(
+                        (self.magnitudes[3] % FSIZE ) as usize
+                    )
+                }
+                // ROTATING key bits
+                "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { bit_rot_n(key[i], magnitudes[4], LEFT); }" => {
+                    for i in 0..self.key.len() {
+                        self.key[i] = self.key[i].rotate_right(self.magnitudes[4] as u32);
+                    }
+                }
+                "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { bit_rot_n(key[i], magnitudes[5], RIGHT); }" => {
+                    for i in 0..self.key.len() {
+                        self.key[i] = self.key[i].rotate_left(self.magnitudes[5] as u32);
+                    }
+                }
+                // XORING key bits
+                "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] ^= magnitudes[6]; }" => {
+
+                }
+                // SHIFTING magnitudes
+                "shift_n(magnitudes, (sizeof(magnitudes)/sizeof(int)), magnitudes[7] % (sizeof(magnitudes)/sizeof(int)), LEFT);" => {
+
+                }
+                "shift_n(magnitudes, (sizeof(magnitudes)/sizeof(int)), magnitudes[8] % (sizeof(magnitudes)/sizeof(int)), RIGHT);" => {
+
+                }
+                // SHIFTING key
+                "shift_n(key, (sizeof(key) / sizeof(unsigned char)), magnitudes[9] % (sizeof(key) / sizeof(unsigned char)), LEFT);" => {
+
+                }
+                "shift_n(key, (sizeof(key) / sizeof(unsigned char)), magnitudes[10] % (sizeof(key) / sizeof(unsigned char)), RIGHT);" => {
+
+                }
+
+                _ => unimplemented!()
+            }
+        }
+    }
+
     pub fn generate(& mut self) {
         while !self.done() {
             if self.opcode[self.pc as usize] == self.mappings[0] {
-
+                self.call(self.functions[0]);
             }
             self.pc -= 1;
         }
