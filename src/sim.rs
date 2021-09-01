@@ -9,13 +9,14 @@ pub struct VM<'a> {
     pc: i32,
 }
 
+#[allow(non_snake_case)]
 impl VM<'_> {
     pub fn new(key: Vec<u8>, rounds: i32) -> Self {
         let ops = vec![
-            "shift_n(mappings, functions.size(), magnitudes[0] % functions.size(), LEFT);",
-            "shift_n(mappings, functions.size(), magnitudes[1] % functions.size(), RIGHT);",
-            "shift_n(functions.data(), functions.size(), magnitudes[2] % functions.size(), LEFT);",
-            "shift_n(functions.data(), functions.size(), magnitudes[3] % functions.size(), RIGHT);",
+            "shift_n(mappings, magnitudes[0] % functions.size(), LEFT);",
+            "shift_n(mappings, magnitudes[1] % functions.size(), RIGHT);",
+            "shift_n(functions, magnitudes[2] % functions.size(), LEFT);",
+            "shift_n(functions, magnitudes[3] % functions.size(), RIGHT);",
             "magnitudes[0]++;",
             "magnitudes[1]++;",
             "magnitudes[2]++;",
@@ -25,26 +26,26 @@ impl VM<'_> {
             "magnitudes[2]--;",
             "magnitudes[3]--;",
     
-            "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { bit_rot_n(key[i], magnitudes[4], LEFT); }",
-            "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { bit_rot_n(key[i], magnitudes[5], RIGHT); }",
+            "for (int i = 0; i < key.size(); i++) { bit_rot_n(key[i], magnitudes[4], LEFT); }",
+            "for (int i = 0; i < key.size(); i++) { bit_rot_n(key[i], magnitudes[5], RIGHT); }",
             "magnitudes[4]++;",
             "magnitudes[5]++;",
             "magnitudes[4]--;",
             "magnitudes[5]--;",
     
-            "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] ^= magnitudes[6]; }",
+            "for (int i = 0; i < key.size(); i++) { key[i] ^= magnitudes[6]; }",
             "magnitudes[6]++;",
             "magnitudes[6]--;",
     
-            "shift_n(magnitudes, (sizeof(magnitudes)/sizeof(int)), magnitudes[7] % (sizeof(magnitudes)/sizeof(int)), LEFT);",
-            "shift_n(magnitudes, (sizeof(magnitudes)/sizeof(int)), magnitudes[8] % (sizeof(magnitudes)/sizeof(int)), RIGHT);",
+            "shift_n(magnitudes, magnitudes[7] % magnitudes.size(), LEFT);",
+            "shift_n(magnitudes, magnitudes[8] % magnitudes.size(), RIGHT);",
             "magnitudes[7]++;",
             "magnitudes[7]--;",
             "magnitudes[8]++;",
             "magnitudes[8]--;",
     
-            "shift_n(key, (sizeof(key) / sizeof(unsigned char)), magnitudes[9] % (sizeof(key) / sizeof(unsigned char)), LEFT);",
-            "shift_n(key, (sizeof(key) / sizeof(unsigned char)), magnitudes[10] % (sizeof(key) / sizeof(unsigned char)), RIGHT);",
+            "shift_n(key, magnitudes[9] % key.size(), LEFT);",
+            "shift_n(key, magnitudes[10] % key.size(), RIGHT);",
             "magnitudes[9]++;",
             "magnitudes[9]--;",
             "magnitudes[10]++;",
@@ -118,64 +119,72 @@ impl VM<'_> {
         } else {
             match op {
                 // SHIFTING mappings
-                "shift_n(mappings, functions.size(), magnitudes[0] % functions.size(), LEFT);" => {
+                "shift_n(mappings, magnitudes[0] % functions.size(), LEFT);" => {
                     self.mappings.rotate_right(
                         self.magnitudes[0] as usize % self.functions.len()
                     )
                 }
-                "shift_n(mappings, functions.size(), magnitudes[1] % functions.size(), RIGHT);" => {
+                "shift_n(mappings, magnitudes[1] % functions.size(), RIGHT);" => {
                     self.mappings.rotate_left(
                         (self.magnitudes[1] % FSIZE) as usize
                     )
                 }
                 // SHIFTING functions
-                "shift_n(functions.data(), functions.size(), magnitudes[2] % functions.size(), LEFT);" => {
+                "shift_n(functions, magnitudes[2] % functions.size(), LEFT);" => {
                     self.functions.rotate_right(
                         (self.magnitudes[2] % FSIZE ) as usize
                     )
                 }
-                "shift_n(functions.data(), functions.size(), magnitudes[3] % functions.size(), RIGHT);" => {
+                "shift_n(functions, magnitudes[3] % functions.size(), RIGHT);" => {
                     self.functions.rotate_left(
                         (self.magnitudes[3] % FSIZE ) as usize
                     )
                 }
                 // ROTATING key bits
-                "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { bit_rot_n(key[i], magnitudes[4], LEFT); }" => {
+                "for (int i = 0; i < key.size(); i++) { bit_rot_n(key[i], magnitudes[4], LEFT); }" => {
                     for i in 0..self.key.len() {
-                        self.key[i] = self.key[i].rotate_right(self.magnitudes[4] as u32);
+                        self.key[i] = self.key[i].rotate_right({
+                            let a = self.magnitudes[4] as u32;
+                            print!("{}", a);
+                            a
+                        });
                     }
                 }
-                "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { bit_rot_n(key[i], magnitudes[5], RIGHT); }" => {
+                "for (int i = 0; i < key.size(); i++) { bit_rot_n(key[i], magnitudes[5], RIGHT); }" => {
                     for i in 0..self.key.len() {
-                        self.key[i] = self.key[i].rotate_left(self.magnitudes[5] as u32);
+                        self.key[i] = self.key[i].rotate_left({
+                            let a = self.magnitudes[5] as u32;
+                            print!("{}", a);
+                            a
+                        });
                     }
                 }
                 // XORING key bits
-                "for (int i = 0; i < (sizeof(key) / sizeof(unsigned char)); i++) { key[i] ^= magnitudes[6]; }" => {
+                "for (int i = 0; i < key.size(); i++) { key[i] ^= magnitudes[6]; }" => {
                     for i in 0..self.key.len() {
                         self.key[i] ^= self.magnitudes[6];
                     }
                 }
                 // SHIFTING magnitudes
-                "shift_n(magnitudes, (sizeof(magnitudes)/sizeof(int)), magnitudes[7] % (sizeof(magnitudes)/sizeof(int)), LEFT);" => {
+                "shift_n(magnitudes, magnitudes[7] % magnitudes.size(), LEFT);" => {
                     let v = self.magnitudes[7] % self.magnitudes.len() as u8;
                     self.magnitudes.rotate_right(
                         v as usize
                     )
                 }
-                "shift_n(magnitudes, (sizeof(magnitudes)/sizeof(int)), magnitudes[8] % (sizeof(magnitudes)/sizeof(int)), RIGHT);" => {
+                "shift_n(magnitudes, magnitudes[8] % magnitudes.size(), RIGHT);" => {
                     let v = self.magnitudes[8] % self.magnitudes.len() as u8;
                     self.magnitudes.rotate_left(
                         v as usize
                     )
                 }
                 // SHIFTING key
-                "shift_n(key, (sizeof(key) / sizeof(unsigned char)), magnitudes[9] % (sizeof(key) / sizeof(unsigned char)), LEFT);" => {
+                "shift_n(key, magnitudes[9] % key.size(), LEFT);" => {
                     self.key.rotate_right(
                         self.magnitudes[9] as usize % KSIZE
                     )
                 }
-                "shift_n(key, (sizeof(key) / sizeof(unsigned char)), magnitudes[10] % (sizeof(key) / sizeof(unsigned char)), RIGHT);" => {
+                "shift_n(key, magnitudes[10] % key.size(), RIGHT);" => {
                     self.key.rotate_left(
                         self.magnitudes[10] as usize % KSIZE
                     )
@@ -190,10 +199,13 @@ impl VM<'_> {
         while !self.done() {
             for i in 0..self.mappings.len() {
                 if self.opcode[self.pc as usize] == self.mappings[i] {
+                    print!("{}", self.functions[i]);
                     self.call(self.functions[i]);
+                    break;
                 }
             }
             self.pc -= 1;
+            println!(" {:?}", self.key);
         }
     }
 }

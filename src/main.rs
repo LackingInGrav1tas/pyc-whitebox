@@ -21,7 +21,7 @@ fn vec_to_cstr(v: Vec<u8>) -> String {
 fn main() {
     println!("getting key...");
     // HANDLING ARGS
-    let argv = std::env::args().collect::<Vec<String>>();
+    let argv = env::args().collect::<Vec<String>>();
     if argv.len() != 2 {
         println!("ERROR - correct format: whitebox-generator.exe <key-file>");
         std::process::exit(1);
@@ -55,8 +55,8 @@ fn main() {
             let mut s = String::from("");
             for i in 0..vm.functions.len() {
                 s += &format!(r"[&](void)->void {{
-                    {}
-                }},", &vm.functions.get(i).unwrap())
+                    {}{}
+                }},", vm.functions.get(i).unwrap(), format!("std::cout << \"{}\";", vm.functions.get(i).unwrap()))
             }
             s
         })
@@ -80,14 +80,16 @@ fn main() {
 
     println!("compiling file...");
     // COMPILING FILE
+    let mut c = std::process::Command::new(
+        settings["command-service"].as_str().expect("couldn't parse command-service in whitebox-settings.json")
+    );
+    c.arg("/c");
+    c.args(
+        settings["compilation-command"].as_str().unwrap().split(" ")
+    );
+    println!("CMD: {:?}", c);
     print!("{}",
-        match std::process::Command::new(
-            settings["command-service"].as_str().expect("couldn't parse command-service in whitebox-settings.json")
-        )
-        .arg("/c")
-        .args(
-            settings["compilation-command"].as_str().unwrap().split(" ")
-        ).status() {
+        match c.status() {
             Ok(status)  => format!("DONE: COMPILATION {}",
                 if status.success() {
                     "SUCCESSFUL"

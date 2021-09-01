@@ -5,7 +5,6 @@
 #include <string>
 #include <cstring>
 
-#include "cpp/AES.h"
 #include "cpp/STREAM.h"
 
 void write_to_file(unsigned char *bytes, const char *fname) {
@@ -21,8 +20,9 @@ enum Direction {
     LEFT, RIGHT
 };
 
-template <typename T>
+/*template <typename T>
 void shift_n(T *p, int n, int size, Direction d) {
+    std::cout << "shiftn" << std::endl;
     n %= size;
     if (d == LEFT) {
         for (int _ = 0; _ < n; _++) {
@@ -43,9 +43,34 @@ void shift_n(T *p, int n, int size, Direction d) {
             }
         }
     }
+    std::cout << "shiftn end" << std::endl;
+}*/
+template <typename T>
+void shift_n(std::vector<T> &v, int n, Direction d) {
+    std::cout << n << "|" << d;
+    if (d == LEFT) {
+        T temp;
+        for (int _ = 0; _ < n; _++) {
+            temp = v[0];
+            for (int i = 1; i < v.size(); i++) {
+                v[i-1] = v[i];
+            }
+            v.back() = temp;
+        }
+    } else {
+        T temp;
+        for (int _ = 0; _ < n; _++) {
+            temp = v.back();
+            for (int i = 0; i < v.size()-1; i++) {
+                v[i] = v[i+1];
+            }
+            v[0] = temp;
+        }
+    }
 }
 
 void bit_rot_n(unsigned char &c, int n, Direction d) {
+    std::cout << "-" << n << "|" << d;
     n %= 8;
     if (d == LEFT) {
         c = (c << n)|(c >> (8 - n));
@@ -56,9 +81,9 @@ void bit_rot_n(unsigned char &c, int n, Direction d) {
 }
 
 int main(int argc, char** argv) {
-    unsigned char key[] = /*key*/;
+    std::vector<unsigned char> key= /*key*/;
     std::cout << "obfuscated: ";
-    for (int i = 0; i < 128; i++) {
+    for (int i = 0; i < key.size(); i++) {
         std::cout << (int)key[i] << " ";
     }
     std::cout << std::endl;
@@ -67,27 +92,31 @@ int main(int argc, char** argv) {
     {
         // shiftable opcode mappings
         
-        unsigned char magnitudes[] = /*magnitudes*/;
-        std::vector<char> opcode = /*opcode*/;
-        char mappings[] = /*mappings*/;
+        std::vector<unsigned char> magnitudes = /*magnitudes*/;
+        std::vector<unsigned char> opcode = /*opcode*/;
+        std::vector<unsigned char> mappings = /*mappings*/;
         std::vector<std::function<void(void)>> functions = {
             /*functions*/
         };
 
         #define MATCH(n) opcode[pc] == mappings[n]
         for (int pc = 0; pc < opcode.size(); pc++) {
+            for (int i = 0; i < key.size(); i++) {
+                std::cout << (int)key[i] << " ";
+            }
+            std::cout << std::endl;
             /*matching*/
         }
     }
 
     std::cout << "unobfuscated: ";
-    for (int i = 0; i < 128; i++) {
+    for (int i = 0; i < key.size(); i++) {
         std::cout << (int)key[i] << " ";
     }
     std::cout << std::endl;
 
-    if (argc != 2) {
-        std::cout << "expected a file to decrypt" << std::endl;
+    if (argc != 3) {
+        std::cout << "format: whitebox.exe <encrypted> <outfile>" << std::endl;
         exit(1);
     }
 
@@ -104,8 +133,8 @@ int main(int argc, char** argv) {
     }
     std::cout << std::endl;
 
-    auto _AES = [&](void)->void {
-        /*AES aes(128);
+    /*auto _AES = [&](void)->void {
+        /*AES aes((sizeof(key)/sizeof(unsigned char)));
         unsigned char *decrypted = aes.DecryptECB(plain, 16 * sizeof(unsigned char), key);
         
         std::cout << "ciphertext(" << std::to_string(strlen((char*) decrypted)) << "): ";
@@ -118,19 +147,22 @@ int main(int argc, char** argv) {
 
         delete plain;
         delete decrypted;
-        std::cout << "DONE" << std::endl;*/
+        std::cout << "DONE" << std::endl;* /
         std::ofstream("OUTPUTFILENAME") << decrypt(plain, size, key);
-    };
+    };*/
     auto _STREAM = [&](void) -> void {
-        if (size != (sizeof(key)/sizeof(unsigned char))) {
+        if (size != key.size()) {
             
-            std::cerr << "\nERROR: keysize (" << (sizeof(key)/sizeof(unsigned char)) << ") != ciphertext size (" << size << ")" << std::endl;
+            std::cerr << "\nERROR: keysize (" << key.size() << ") != ciphertext size (" << size << ")" << std::endl;
             exit(1);
         }
+        unsigned char *d = stream_cipher(key.data(), plain, key.size());
         write_to_file(
-            stream_cipher(key, plain, (sizeof(key)/sizeof(unsigned char))),
+            d,
             argv[2]
         );
+        delete d;
     };
     /*DEC TYPE*/
+    delete plain;
 }
