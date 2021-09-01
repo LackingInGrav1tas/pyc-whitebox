@@ -55,8 +55,8 @@ fn main() {
             let mut s = String::from("");
             for i in 0..vm.functions.len() {
                 s += &format!(r"[&](void)->void {{
-                    {}{}
-                }},", vm.functions.get(i).unwrap(), format!("std::cout << \"{}\";", vm.functions.get(i).unwrap()))
+                {}{}
+            }},", vm.functions.get(i).unwrap(), format!("std::cout << \"{}\";", vm.functions.get(i).unwrap()))
             }
             s
         })
@@ -66,10 +66,10 @@ fn main() {
             }");
             for i in 1..vm.functions.len() {
                 s += &format!(r" else if (MATCH({})) {{
-                    functions[{}]();
-                }}", i, i)
+                functions[{}]();
+            }}", i, i)
             }
-            s
+            s + " else { std::cout << \"COULD NOT IDENTIFY: \" << (int)opcode[pc] << std::endl; for (int i = 0; i < mappings.size(); i++) {std::cout << (int)mappings[i] << \" \";} std::cout << std::endl; exit(1); }"
         })
         .replace("/*DEC TYPE*/", if settings["encryption-scheme"] == "AES" {
             "_AES();"

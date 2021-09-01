@@ -61,8 +61,8 @@ void shift_n(std::vector<T> &v, int n, Direction d) {
         T temp;
         for (int _ = 0; _ < n; _++) {
             temp = v.back();
-            for (int i = 0; i < v.size()-1; i++) {
-                v[i] = v[i+1];
+            for (int i = v.size()-1; i > 0; i--) {
+                v[i] = v[i-1];
             }
             v[0] = temp;
         }
@@ -82,11 +82,11 @@ void bit_rot_n(unsigned char &c, int n, Direction d) {
 
 int main(int argc, char** argv) {
     std::vector<unsigned char> key= /*key*/;
-    std::cout << "obfuscated: ";
+    std::cout << "\nobfuscated: ";
     for (int i = 0; i < key.size(); i++) {
         std::cout << (int)key[i] << " ";
     }
-    std::cout << std::endl;
+    std::cout << "\n" << std::endl;
 
     // use self editing VM working backwards in the python program to use here
     {
@@ -104,12 +104,12 @@ int main(int argc, char** argv) {
             for (int i = 0; i < key.size(); i++) {
                 std::cout << (int)key[i] << " ";
             }
-            std::cout << std::endl;
             /*matching*/
+            std::cout << std::endl;
         }
     }
 
-    std::cout << "unobfuscated: ";
+    std::cout << "\n\nunobfuscated: ";
     for (int i = 0; i < key.size(); i++) {
         std::cout << (int)key[i] << " ";
     }
