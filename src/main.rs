@@ -1,4 +1,5 @@
 mod sim;
+mod constants;
 
 use sim::VM;
 
