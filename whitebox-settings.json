@@ -1,6 +1,6 @@
 {
-    "compilation-command": "g++ compiled.cpp cpp/STREAM.cpp -o whitebox.exe",
     "encryption-scheme": "STREAM",
     "opcode-rounds": 15,
-    "command-service": "cmd"
+    "command-service": "cmd",
+    "language": "C++"
 }

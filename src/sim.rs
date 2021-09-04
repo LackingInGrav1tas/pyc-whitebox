@@ -1,6 +1,6 @@
 use rand;
 
-use crate::constants::*;
+use crate::constants::c::*;
 
 pub struct VM<'a> {
     pub functions: Vec<&'a str>,
