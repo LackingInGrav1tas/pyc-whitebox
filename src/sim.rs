@@ -160,6 +160,24 @@ impl VM<'_> {
             } else {
                 self.magnitudes[n] += 1;
             }
+        } else if op.contains("increment") {
+            let n = op.replace("increment(& mut self.magnitudes[", "")
+                    .replace("]);", "")
+                    .parse::<usize>().unwrap();
+            if self.magnitudes[n] == 255 {
+                self.magnitudes[n] = 0;
+            } else {
+                self.magnitudes[n] -= 1;
+            }
+        } else if op.contains("decrement") {
+            let n = op.replace("decrement(& mut self.magnitudes[", "")
+                    .replace("]);", "")
+                    .parse::<usize>().expect(&format!("couldnt parse {}", op));
+            if self.magnitudes[n] == 255 {
+                self.magnitudes[n] = 0;
+            } else {
+                self.magnitudes[n] += 1;
+            }
         } else {
             match op {
                 // SHIFTING mappings
@@ -234,7 +252,10 @@ impl VM<'_> {
                     )
                 }
 
-                _ => unimplemented!()
+                unknown => {
+                    print!("unknown op: {}", unknown);
+                    panic!();
+                }
             }
         }
     }

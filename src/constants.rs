@@ -39,41 +39,41 @@ pub mod c {
 
 #[allow(unused_variables, dead_code)]
 pub mod rust {
-    pub const SHIFT_MAP_L: &str = "mappings.rotate_left(magnitudes[0] as usize % functions.len());";
-    pub const SHIFT_MAP_R: &str = "mappings.rotate_right(magnitudes[1] as usize % functions.len())";
-    pub const SHIFT_FNC_L: &str = "functions.rotate_left(magnitudes[2] as usize % mappings.len());";
-    pub const SHIFT_FNC_R: &str = "functions.rotate_right(magnitudes[3] as usize % mappings.len());";
-    pub const SHIFT_MAG_L: &str = "let t = magnitudes[7] as usize % magnitudes.len(); magnitudes.rotate_left(t as usize)";
-    pub const SHIFT_MAG_R: &str = "let t = magnitudes[8] as usize % magnitudes.len(); magnitudes.rotate_right(t as usize)";
-    pub const SHIFT_KEY_L: &str = "key.rotate_left(magnitudes[8] as usize % KSIZE)";
-    pub const SHIFT_KEY_R: &str = "key.rotate_right(magnitudes[9] as usize % KSIZE)";
-    pub const ROT_KEY_L: &str = "for i in 0..key.len() { key[i] = key[i].rotate_left(magnitudes[4] as usize); }";
-    pub const ROT_KEY_R: &str = "for i in 0..key.len() { key[i] = key[i].rotate_right(magnitudes[5] as usize); }";
-    pub const XOR_KEY: &str = "for i in 0..key.len() { key[i] ^= magnitudes[6]; }";
+    pub const SHIFT_MAP_L: &str = "self.mappings.rotate_left(self.magnitudes[0] as usize % self.functions.len());";
+    pub const SHIFT_MAP_R: &str = "self.mappings.rotate_right(self.magnitudes[1] as usize % self.functions.len())";
+    pub const SHIFT_FNC_L: &str = "self.functions.rotate_left(self.magnitudes[2] as usize % self.mappings.len());";
+    pub const SHIFT_FNC_R: &str = "self.functions.rotate_right(self.magnitudes[3] as usize % self.mappings.len());";
+    pub const SHIFT_MAG_L: &str = "let t = self.magnitudes[7] as usize % self.magnitudes.len(); self.magnitudes.rotate_left(t)";
+    pub const SHIFT_MAG_R: &str = "let t = self.magnitudes[8] as usize % self.magnitudes.len(); self.magnitudes.rotate_right(t)";
+    pub const SHIFT_KEY_L: &str = "self.key.rotate_left(self.magnitudes[8] as usize % KSIZE)";
+    pub const SHIFT_KEY_R: &str = "self.key.rotate_right(self.magnitudes[9] as usize % KSIZE)";
+    pub const ROT_KEY_L: &str = "for i in 0..self.key.len() { self.key[i] = self.key[i].rotate_left(self.magnitudes[4] as u32); }";
+    pub const ROT_KEY_R: &str = "for i in 0..self.key.len() { self.key[i] = self.key[i].rotate_right(self.magnitudes[5] as u32); }";
+    pub const XOR_KEY: &str = "for i in 0..self.key.len() { self.key[i] ^= self.magnitudes[6]; }";
 
-    pub const INC0: &str = "increment(& mut magnitudes[0]);";
-    pub const INC1: &str = "increment(& mut magnitudes[1]);";
-    pub const INC2: &str = "increment(& mut magnitudes[2]);";
-    pub const INC3: &str = "increment(& mut magnitudes[3]);";
-    pub const INC4: &str = "increment(& mut magnitudes[4]);";
-    pub const INC5: &str = "increment(& mut magnitudes[5]);";
-    pub const INC6: &str = "increment(& mut magnitudes[6]);";
-    pub const INC7: &str = "increment(& mut magnitudes[7]);";
-    pub const INC8: &str = "increment(& mut magnitudes[8]);";
-    pub const INC9: &str = "increment(& mut magnitudes[9]);";
-    pub const INC10: &str = "increment(& mut magnitudes[10]);";
+    pub const INC0: &str = "increment(& mut self.magnitudes[0]);";
+    pub const INC1: &str = "increment(& mut self.magnitudes[1]);";
+    pub const INC2: &str = "increment(& mut self.magnitudes[2]);";
+    pub const INC3: &str = "increment(& mut self.magnitudes[3]);";
+    pub const INC4: &str = "increment(& mut self.magnitudes[4]);";
+    pub const INC5: &str = "increment(& mut self.magnitudes[5]);";
+    pub const INC6: &str = "increment(& mut self.magnitudes[6]);";
+    pub const INC7: &str = "increment(& mut self.magnitudes[7]);";
+    pub const INC8: &str = "increment(& mut self.magnitudes[8]);";
+    pub const INC9: &str = "increment(& mut self.magnitudes[9]);";
+    pub const INC10: &str = "increment(& mut self.magnitudes[10]);";
 
-    pub const DEC0: &str = "decrement(& mut magnitudes[0])s;";
-    pub const DEC1: &str = "decrement(& mut magnitudes[1]);";
-    pub const DEC2: &str = "decrement(& mut magnitudes[2]);";
-    pub const DEC3: &str = "decrement(& mut magnitudes[3]);";
-    pub const DEC4: &str = "decrement(& mut magnitudes[4]);";
-    pub const DEC5: &str = "decrement(& mut magnitudes[5]);";
-    pub const DEC6: &str = "decrement(& mut magnitudes[6]);";
-    pub const DEC7: &str = "decrement(& mut magnitudes[7]);";
-    pub const DEC8: &str = "decrement(& mut magnitudes[8]);";
-    pub const DEC9: &str = "decrement(& mut magnitudes[9]);";
-    pub const DEC10: &str = "decrement(& mut magnitudes[10]);";
+    pub const DEC0: &str = "decrement(& mut self.magnitudes[0]);";
+    pub const DEC1: &str = "decrement(& mut self.magnitudes[1]);";
+    pub const DEC2: &str = "decrement(& mut self.magnitudes[2]);";
+    pub const DEC3: &str = "decrement(& mut self.magnitudes[3]);";
+    pub const DEC4: &str = "decrement(& mut self.magnitudes[4]);";
+    pub const DEC5: &str = "decrement(& mut self.magnitudes[5]);";
+    pub const DEC6: &str = "decrement(& mut self.magnitudes[6]);";
+    pub const DEC7: &str = "decrement(& mut self.magnitudes[7]);";
+    pub const DEC8: &str = "decrement(& mut self.magnitudes[8]);";
+    pub const DEC9: &str = "decrement(& mut self.magnitudes[9]);";
+    pub const DEC10: &str = "decrement(& mut self.magnitudes[10]);";
 
     pub fn to_u8_value(f: &str) -> u8 {
         match f {

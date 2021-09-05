@@ -1,5 +1,7 @@
 use std::io::Read;
 
+const KSIZE: usize = /*KSIZE*/;
+
 fn increment(n: & mut u8) {
     if *n == 255 {
         *n = 0;
@@ -43,8 +45,8 @@ struct VM {
 
 impl VM {
     fn new() -> Self {
+        let k = /*key*/;
         Self {
-            let k = /*key*/;
             functions: /*functions-rep*/,
             key: k.clone(),
             magnitudes: /*magnitudes*/,
@@ -60,9 +62,9 @@ impl VM {
         }
     }
 
-    fn run() -> Result<(), ()> {
+    fn run(& mut self) -> Result<(), ()> {
 
-        for op in opcode {
+        for op in &self.opcode {
 
         }
 

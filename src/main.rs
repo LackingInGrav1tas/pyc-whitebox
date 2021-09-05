@@ -55,15 +55,17 @@ fn main() {
     let mut vm = VM::new(key, settings["opcode-rounds"].as_i32().expect("could not parse opcode-rounds in whitebox-settings.json"), settings["language"].as_str().unwrap());
     vm.generate();
 
-    println!("writing to file...");
+    println!("building whitebox...");
     println!("key: {:?}\n", vm.key);
     // WRITING TO FILE
+
     fs::write(
 
         if settings["language"].as_str().unwrap() == "C++" {
             "compiled.cpp"
         } else {
-            "compiled.rs"
+            std::process::Command::new("cargo").args(&["new", "whitebox-build"]).output().unwrap();
+            "whitebox-build/src/main.rs"
         },
 
         fs::read_to_string(
@@ -73,6 +75,7 @@ fn main() {
                 "rs/template.rs"
             }
         ).unwrap()
+        .replace("/*KSIZE*/", &vm.key.len().to_string())
         .replace("/*key*/", &vec_to_str(vm.key, settings["language"].as_str().unwrap()))
         .replace("/*magnitudes*/", &vec_to_str(vm.magnitudes, settings["language"].as_str().unwrap()))
         .replace("/*mappings*/", &vec_to_str(vm.mappings, settings["language"].as_str().unwrap()))

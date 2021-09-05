@@ -5,6 +5,7 @@ a.exe
 tests/
 whitebox.exe
 compiled.cpp
+compiled.rs
 *.bin
 *.pem
 *.exe
@@ -13,6 +14,8 @@ __pycache__/
 __pycache__/whitebox-generator.cpython-38.pyc
 dec.bin
 /old
+/whitebox-build
+
 
 # Added by cargo
 
