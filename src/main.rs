@@ -65,6 +65,18 @@ fn main() {
             "compiled.cpp"
         } else {
             std::process::Command::new("cargo").args(&["new", "whitebox-build"]).output().unwrap();
+            
+            fs::write(
+                "whitebox-build/Cargo.toml",
+                "[package]
+name = \"whitebox-build\"
+version = \"0.1.0\"
+edition = \"2018\"
+                
+[dependencies]
+aes = \"0.7.5\""
+            ).unwrap();
+            
             "whitebox-build/src/main.rs"
         },
 
