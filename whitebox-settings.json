@@ -2,5 +2,5 @@
     "encryption-scheme": "STREAM",
     "opcode-rounds": 15,
     "command-service": "cmd",
-    "language": "C++"
+    "language": "Rust"
 }

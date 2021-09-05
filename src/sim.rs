@@ -1,6 +1,6 @@
 use rand;
 
-use crate::constants::c::*;
+use crate::constants::{c, rust};
 
 pub struct VM<'a> {
     pub functions: Vec<&'a str>,
@@ -13,46 +13,88 @@ pub struct VM<'a> {
 
 #[allow(non_snake_case)]
 impl VM<'_> {
-    pub fn new(key: Vec<u8>, rounds: i32) -> Self {
-        let ops = vec![
-            SHIFT_MAP_L,
-            SHIFT_MAP_R,
-            SHIFT_FNC_L,
-            SHIFT_FNC_R,
-            SHIFT_MAG_L,
-            SHIFT_MAG_R,
-            SHIFT_KEY_L,
-            SHIFT_KEY_R,
-            
-            ROT_KEY_L,
-            ROT_KEY_R,
+    pub fn new(key: Vec<u8>, rounds: i32, lang: &str) -> Self {
+        let ops = if lang == "C++" {
+            vec![
+                c::SHIFT_MAP_L,
+                c::SHIFT_MAP_R,
+                c::SHIFT_FNC_L,
+                c::SHIFT_FNC_R,
+                c::SHIFT_MAG_L,
+                c::SHIFT_MAG_R,
+                c::SHIFT_KEY_L,
+                c::SHIFT_KEY_R,
+                
+                c::ROT_KEY_L,
+                c::ROT_KEY_R,
 
-            XOR_KEY,
+                c::XOR_KEY,
 
-            INC0,
-            INC1,
-            INC2,
-            INC3,
-            INC4,
-            INC5,
-            INC6,
-            INC7,
-            INC8,
-            INC9,
-            INC10,
+                c::INC0,
+                c::INC1,
+                c::INC2,
+                c::INC3,
+                c::INC4,
+                c::INC5,
+                c::INC6,
+                c::INC7,
+                c::INC8,
+                c::INC9,
+                c::INC10,
 
-            DEC0,
-            DEC1,
-            DEC2,
-            DEC3,
-            DEC4,
-            DEC5,
-            DEC6,
-            DEC7,
-            DEC8,
-            DEC9,
-            DEC10,
-        ];
+                c::DEC0,
+                c::DEC1,
+                c::DEC2,
+                c::DEC3,
+                c::DEC4,
+                c::DEC5,
+                c::DEC6,
+                c::DEC7,
+                c::DEC8,
+                c::DEC9,
+                c::DEC10,
+            ]
+        } else {
+            vec![
+                rust::SHIFT_MAP_L,
+                rust::SHIFT_MAP_R,
+                rust::SHIFT_FNC_L,
+                rust::SHIFT_FNC_R,
+                rust::SHIFT_MAG_L,
+                rust::SHIFT_MAG_R,
+                rust::SHIFT_KEY_L,
+                rust::SHIFT_KEY_R,
+                
+                rust::ROT_KEY_L,
+                rust::ROT_KEY_R,
+
+                rust::XOR_KEY,
+
+                rust::INC0,
+                rust::INC1,
+                rust::INC2,
+                rust::INC3,
+                rust::INC4,
+                rust::INC5,
+                rust::INC6,
+                rust::INC7,
+                rust::INC8,
+                rust::INC9,
+                rust::INC10,
+
+                rust::DEC0,
+                rust::DEC1,
+                rust::DEC2,
+                rust::DEC3,
+                rust::DEC4,
+                rust::DEC5,
+                rust::DEC6,
+                rust::DEC7,
+                rust::DEC8,
+                rust::DEC9,
+                rust::DEC10,
+            ]
+        };
         Self {
             functions: ops.clone(),
             mappings: {
@@ -121,29 +163,29 @@ impl VM<'_> {
         } else {
             match op {
                 // SHIFTING mappings
-                SHIFT_MAP_L => {
+                c::SHIFT_MAP_L | rust::SHIFT_MAP_L => {
                     self.mappings.rotate_right(
                         self.magnitudes[0] as usize % self.functions.len()
                     )
                 }
-                SHIFT_MAP_R => {
+                c::SHIFT_MAP_R | rust::SHIFT_MAP_R => {
                     self.mappings.rotate_left(
                         (self.magnitudes[1] % FSIZE) as usize
                     )
                 }
                 // SHIFTING functions
-                SHIFT_FNC_L => {
+                c::SHIFT_FNC_L | rust::SHIFT_FNC_L => {
                     self.functions.rotate_right(
                         (self.magnitudes[2] % FSIZE ) as usize
                     )
                 }
-                SHIFT_FNC_R => {
+                c::SHIFT_FNC_R | rust::SHIFT_FNC_R => {
                     self.functions.rotate_left(
                         (self.magnitudes[3] % FSIZE ) as usize
                     )
                 }
                 // ROTATING key bits
-                ROT_KEY_L => {
+                c::ROT_KEY_L | rust::ROT_KEY_L => {
                     for i in 0..self.key.len() {
                         self.key[i] = self.key[i].rotate_right({
                             let a = self.magnitudes[4] as u32;
@@ -152,7 +194,7 @@ impl VM<'_> {
                         });
                     }
                 }
-                ROT_KEY_R => {
+                c::ROT_KEY_R | rust::ROT_KEY_R => {
                     for i in 0..self.key.len() {
                         self.key[i] = self.key[i].rotate_left({
                             let a = self.magnitudes[5] as u32;
@@ -162,31 +204,31 @@ impl VM<'_> {
                     }
                 }
                 // XORING key bits
-                XOR_KEY => {
+                c::XOR_KEY | rust::XOR_KEY => {
                     for i in 0..self.key.len() {
                         self.key[i] ^= self.magnitudes[6];
                     }
                 }
                 // SHIFTING magnitudes
-                SHIFT_MAG_L => {
+                c::SHIFT_MAG_L | rust::SHIFT_MAG_L => {
                     let v = self.magnitudes[7] % self.magnitudes.len() as u8;
                     self.magnitudes.rotate_right(
                         v as usize
                     )
                 }
-                SHIFT_MAG_R => {
+                c::SHIFT_MAG_R | rust::SHIFT_MAG_R => {
                     let v = self.magnitudes[8] % self.magnitudes.len() as u8;
                     self.magnitudes.rotate_left(
                         v as usize
                     )
                 }
                 // SHIFTING key
-                SHIFT_KEY_L => {
+                c::SHIFT_KEY_L | rust::SHIFT_KEY_L => {
                     self.key.rotate_right(
                         self.magnitudes[9] as usize % KSIZE
                     )
                 }
-                SHIFT_KEY_R => {
+                c::SHIFT_KEY_R | rust::SHIFT_KEY_R => {
                     self.key.rotate_left(
                         self.magnitudes[10] as usize % KSIZE
                     )

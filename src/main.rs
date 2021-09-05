@@ -3,6 +3,7 @@ mod constants;
 
 use sim::VM;
 use constants::errors::*;
+use constants::rust::to_u8_value;
 
 use json;
 
@@ -51,7 +52,7 @@ fn main() {
 
     println!("generating opcode...");
     // GENERATING OPCODE
-    let mut vm = VM::new(key, settings["opcode-rounds"].as_i32().expect("could not parse opcode-rounds in whitebox-settings.json"));
+    let mut vm = VM::new(key, settings["opcode-rounds"].as_i32().expect("could not parse opcode-rounds in whitebox-settings.json"), settings["language"].as_str().unwrap());
     vm.generate();
 
     println!("writing to file...");
@@ -88,16 +89,26 @@ fn main() {
                     s
                 }
                 "Rust" | "rust" => {
-                    for _i in 0..vm.functions.len() {
-                        
+                    // vec_to_str((0_u8..vm.functions.len() as u8).collect::<Vec<u8>>(), "Rust")
+                    let mut s = String::from("");
+                    for i in 0..vm.functions.len() {
+                        s += &format!("{} => {{ {} }}", to_u8_value(vm.functions.get(i).unwrap()), vm.functions.get(i).unwrap())
                     }
-                    vec_to_str((0_u8..vm.functions.len() as u8).collect::<Vec<u8>>(), "Rust")
+                    s
                 }
                 _ => {
                     panic!("{}", LANG_ERROR)
                 }
             }
         })
+        .replace("/*functions-rep*/", &{
+            let mut s = String::from("vec![");
+            for function in &vm.functions {
+                s += &(to_u8_value(function).to_string() + ",")
+            }
+            s.pop();
+            s + "]"
+        }) // only in Rust
         .replace("/*matching*/", &{
             match settings["language"].as_str().unwrap() {
                 "C++" => {

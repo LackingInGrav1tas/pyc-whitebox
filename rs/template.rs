@@ -1,5 +1,21 @@
 use std::io::Read;
 
+fn increment(n: & mut u8) {
+    if *n == 255 {
+        *n = 0;
+    } else {
+        *n += 1;
+    }
+}
+
+fn decrement(n: & mut u8) {
+    if *n == 0 {
+        *n = 255;
+    } else {
+        *n -= 1;
+    }
+}
+
 #[allow(non_snake_case)]
 fn _STREAM(key: Vec<u8>, txt: Vec<u8>) -> Vec<u8> {
     if key.len() != txt.len() {
@@ -16,15 +32,44 @@ fn _STREAM(key: Vec<u8>, txt: Vec<u8>) -> Vec<u8> {
     v
 }
 
-fn main() {
-    let mut functions: Vec<u8> = /**/;
-    let mut key: Vec<u8> = /**/;
-    let mut magnitudes: Vec<u8> = /**/;
-    let mut mappings: Vec<u8> = /**/;
+struct VM {
+    functions: Vec<u8>,
+    key: Vec<u8>,
+    magnitudes: Vec<u8>,
+    mappings: Vec<u8>,
+    opcode: Vec<u8>,
+    ksize: usize,
+}
 
-    for op in opcode {
-        match op {
-            /*opcode*/
+impl VM {
+    fn new() -> Self {
+        Self {
+            let k = /*key*/;
+            functions: /*functions-rep*/,
+            key: k.clone(),
+            magnitudes: /*magnitudes*/,
+            mappings: /*mappings*/,
+            opcode: /*opcode*/,
+            ksize: k.len(),
         }
     }
+
+    fn op(& mut self, op: u8) {
+        match op {
+            /*functions*/
+        }
+    }
+
+    fn run() -> Result<(), ()> {
+
+        for op in opcode {
+
+        }
+
+        Ok(())
+    }
+}
+
+fn main() {
+    
 }

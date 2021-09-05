@@ -8,3 +8,4 @@ edition = "2018"
 [dependencies]
 json = "0.12.4"
 rand = "0.8.4"
+aes = "0.7.5"
