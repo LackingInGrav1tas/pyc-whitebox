@@ -1,7 +1,5 @@
 use std::io::Read;
 
-const KSIZE: usize = /*KSIZE*/;
-
 fn increment(n: & mut u8) {
     if *n == 255 {
         *n = 0;
@@ -59,19 +57,26 @@ impl VM {
     fn op(& mut self, op: u8) {
         match op {
             /*functions*/
+            _ => unreachable!()
         }
     }
 
-    fn run(& mut self) -> Result<(), ()> {
+    fn run(& mut self) -> Result<Vec<u8>, ()> {
 
-        for op in &self.opcode {
-
+        for pc in 0..self.opcode.len() {
+            for i in 0..self.mappings.len() {
+                if self.opcode[pc] == self.mappings[i] {
+                    self.op(self.functions[i]);
+                    break;
+                }
+            }
         }
 
-        Ok(())
+        Ok(self.key.clone())
     }
 }
 
 fn main() {
-    
+    let key = VM::new().run().unwrap();
+    print!("{:?}", key);
 }

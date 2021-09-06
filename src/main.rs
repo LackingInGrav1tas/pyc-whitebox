@@ -87,7 +87,6 @@ aes = \"0.7.5\""
                 "rs/template.rs"
             }
         ).unwrap()
-        .replace("/*KSIZE*/", &vm.key.len().to_string())
         .replace("/*key*/", &vec_to_str(vm.key, settings["language"].as_str().unwrap()))
         .replace("/*magnitudes*/", &vec_to_str(vm.magnitudes, settings["language"].as_str().unwrap()))
         .replace("/*mappings*/", &vec_to_str(vm.mappings, settings["language"].as_str().unwrap()))
