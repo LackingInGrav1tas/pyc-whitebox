@@ -194,12 +194,12 @@ impl VM<'_> {
                 // SHIFTING functions
                 c::SHIFT_FNC_L | rust::SHIFT_FNC_L => {
                     self.functions.rotate_right(
-                        (self.magnitudes[2] % FSIZE ) as usize
+                        (self.magnitudes[2] % FSIZE ) as usize * 0
                     )
                 }
                 c::SHIFT_FNC_R | rust::SHIFT_FNC_R => {
                     self.functions.rotate_left(
-                        (self.magnitudes[3] % FSIZE ) as usize
+                        (self.magnitudes[3] % FSIZE ) as usize * 0
                     )
                 }
                 // ROTATING key bits
@@ -207,7 +207,6 @@ impl VM<'_> {
                     for i in 0..self.key.len() {
                         self.key[i] = self.key[i].rotate_right({
                             let a = self.magnitudes[4] as u32;
-                            print!("{}", a);
                             a
                         });
                     }
@@ -216,7 +215,6 @@ impl VM<'_> {
                     for i in 0..self.key.len() {
                         self.key[i] = self.key[i].rotate_left({
                             let a = self.magnitudes[5] as u32;
-                            print!("{}", a);
                             a
                         });
                     }
@@ -264,13 +262,12 @@ impl VM<'_> {
         while !self.done() {
             for i in 0..self.mappings.len() {
                 if self.opcode[self.pc as usize] == self.mappings[i] {
-                    print!("{}", self.functions[i]);
+                    println!("{} |||  {:?} -- {:?}", self.functions[i], self.magnitudes, self.key);
                     self.call(self.functions[i]);
                     break;
                 }
             }
             self.pc -= 1;
-            println!(" {:?}", self.key);
         }
     }
 }

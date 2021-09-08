@@ -50,7 +50,7 @@ fn main() {
         &fs::read_to_string("whitebox-settings.json").expect("could not find whitebox-settings.json")
     ).expect("could not parse json");
 
-    println!("generating opcode...");
+    println!("generating opcode...\n\n");
     // GENERATING OPCODE
     let mut vm = VM::new(key, settings["opcode-rounds"].as_i32().expect("could not parse opcode-rounds in whitebox-settings.json"), settings["language"].as_str().unwrap());
     vm.generate();
@@ -90,7 +90,7 @@ aes = \"0.7.5\""
         .replace("/*key*/", &vec_to_str(vm.key, settings["language"].as_str().unwrap()))
         .replace("/*magnitudes*/", &vec_to_str(vm.magnitudes, settings["language"].as_str().unwrap()))
         .replace("/*mappings*/", &vec_to_str(vm.mappings, settings["language"].as_str().unwrap()))
-        .replace("/*opcode*/", &vec_to_str(vm.opcode, settings["language"].as_str().unwrap()))
+        .replace("/*opcode*/", &vec_to_str(vm.opcode.clone(), settings["language"].as_str().unwrap()))
         .replace("/*functions*/", &{
             match settings["language"].as_str().unwrap() {
                 "C++" => {
@@ -103,12 +103,13 @@ aes = \"0.7.5\""
                     s
                 }
                 "Rust" | "rust" => {
+                    String::new()
                     // vec_to_str((0_u8..vm.functions.len() as u8).collect::<Vec<u8>>(), "Rust")
-                    let mut s = String::from("");
+                    /*let mut s = String::from("");
                     for i in 0..vm.functions.len() {
-                        s += &format!("{} => {{ {} }}", to_u8_value(vm.functions.get(i).unwrap()), vm.functions.get(i).unwrap())
+                        s += &format!("{} => {{ {} }}\n            ", to_u8_value(vm.functions.get(i).unwrap()), vm.functions.get(i).unwrap())
                     }
-                    s
+                    s*/
                 }
                 _ => {
                     panic!("{}", LANG_ERROR)
@@ -151,5 +152,6 @@ aes = \"0.7.5\""
             "_STREAM();"
         })
     ).unwrap();
+    println!("opcode: {:?}", vm.opcode);
     print!("DONE");
 }

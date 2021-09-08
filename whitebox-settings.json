@@ -1,6 +1,6 @@
 {
     "encryption-scheme": "STREAM",
-    "opcode-rounds": 15,
+    "opcode-rounds": 10,
     "command-service": "cmd",
     "language": "Rust"
 }
