@@ -45,8 +45,8 @@ pub mod rust {
     pub const SHIFT_FNC_R: &str = "self.functions.rotate_right(self.magnitudes[3] as usize % self.mappings.len());";
     pub const SHIFT_MAG_L: &str = "let t = self.magnitudes[7] as usize % self.magnitudes.len(); self.magnitudes.rotate_left(t)";
     pub const SHIFT_MAG_R: &str = "let t = self.magnitudes[8] as usize % self.magnitudes.len(); self.magnitudes.rotate_right(t)";
-    pub const SHIFT_KEY_L: &str = "self.key.rotate_left(self.magnitudes[8] as usize % self.ksize)";
-    pub const SHIFT_KEY_R: &str = "self.key.rotate_right(self.magnitudes[9] as usize % self.ksize)";
+    pub const SHIFT_KEY_L: &str = "self.key.rotate_left(self.magnitudes[9] as usize % self.ksize)";
+    pub const SHIFT_KEY_R: &str = "self.key.rotate_right(self.magnitudes[10] as usize % self.ksize)";
     pub const ROT_KEY_L: &str = "for i in 0..self.key.len() { self.key[i] = self.key[i].rotate_left(self.magnitudes[4] as u32); }";
     pub const ROT_KEY_R: &str = "for i in 0..self.key.len() { self.key[i] = self.key[i].rotate_right(self.magnitudes[5] as u32); }";
     pub const XOR_KEY: &str = "for i in 0..self.key.len() { self.key[i] ^= self.magnitudes[6]; }";

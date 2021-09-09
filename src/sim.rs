@@ -164,8 +164,8 @@ impl VM<'_> {
             let n = op.replace("increment(& mut self.magnitudes[", "")
                     .replace("]);", "")
                     .parse::<usize>().unwrap();
-            if self.magnitudes[n] == 255 {
-                self.magnitudes[n] = 0;
+            if self.magnitudes[n] == 0 {
+                self.magnitudes[n] = 255;
             } else {
                 self.magnitudes[n] -= 1;
             }
@@ -194,12 +194,12 @@ impl VM<'_> {
                 // SHIFTING functions
                 c::SHIFT_FNC_L | rust::SHIFT_FNC_L => {
                     self.functions.rotate_right(
-                        (self.magnitudes[2] % FSIZE ) as usize * 0
+                        (self.magnitudes[2] % FSIZE ) as usize
                     )
                 }
                 c::SHIFT_FNC_R | rust::SHIFT_FNC_R => {
                     self.functions.rotate_left(
-                        (self.magnitudes[3] % FSIZE ) as usize * 0
+                        (self.magnitudes[3] % FSIZE ) as usize
                     )
                 }
                 // ROTATING key bits

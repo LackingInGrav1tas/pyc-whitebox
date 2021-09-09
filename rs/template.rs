@@ -78,13 +78,16 @@ struct VM {
     mappings: Vec<u8>,
     opcode: Vec<u8>,
     ksize: usize,
+    fsize: usize
 }
 
 impl VM {
     fn new() -> Self {
         let k = /*key*/;
+        let f = /*functions-rep*/;
         Self {
-            functions: /*functions-rep*/,
+            functions: f.clone(),
+            fsize: f.len(),
             key: k.clone(),
             magnitudes: /*magnitudes*/,
             mappings: /*mappings*/,
@@ -97,12 +100,12 @@ impl VM {
         match op {
             0 => { self.mappings.rotate_left(self.magnitudes[0] as usize % self.functions.len()); }
             1 => { self.mappings.rotate_right(self.magnitudes[1] as usize % self.functions.len()) }
-            2 => { self.functions.rotate_left(0); } // self.magnitudes[2] as usize % self.mappings.len()
-            3 => { self.functions.rotate_right(0); } // self.magnitudes[3] as usize % self.mappings.len()
+            2 => { self.functions.rotate_left(self.magnitudes[2] as usize % self.fsize); }
+            3 => { self.functions.rotate_right(self.magnitudes[3] as usize % self.fsize); }
             4 => { let t = self.magnitudes[7] as usize % self.magnitudes.len(); self.magnitudes.rotate_left(t) }
             5 => { let t = self.magnitudes[8] as usize % self.magnitudes.len(); self.magnitudes.rotate_right(t) }
-            6 => { self.key.rotate_left(self.magnitudes[8] as usize % self.ksize) }
-            7 => { self.key.rotate_right(self.magnitudes[9] as usize % self.ksize) }
+            6 => { self.key.rotate_left(self.magnitudes[9] as usize % self.ksize) }
+            7 => { self.key.rotate_right(self.magnitudes[10] as usize % self.ksize) }
             8 => { for i in 0..self.key.len() { self.key[i] = self.key[i].rotate_left(self.magnitudes[4] as u32); } }
             9 => { for i in 0..self.key.len() { self.key[i] = self.key[i].rotate_right(self.magnitudes[5] as u32); } }
             10 => { for i in 0..self.key.len() { self.key[i] ^= self.magnitudes[6]; } }
